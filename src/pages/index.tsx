@@ -1,15 +1,20 @@
-import { useColorMode } from '@/components/ui/color-mode'
-import { Box, Button, Heading, Stack } from '@chakra-ui/react'
+import type { GetServerSideProps } from 'next'
+import type { Session } from 'next-auth'
+import { getServerSession } from 'next-auth/next'
+import { authOptions } from './api/auth/[...nextauth]'
 
-export default function Home() {
-  const { toggleColorMode } = useColorMode()
+const isExpired = (expiresAt?: string) => !!expiresAt && Date.now() > Date.parse(expiresAt)
 
-  return (
-    <Box p={8}>
-      <Stack gap={4}>
-        <Heading>Next + Chakra UI v3</Heading>
-        <Button onClick={toggleColorMode}>Alternar tema</Button>
-      </Stack>
-    </Box>
-  )
+export const getServerSideProps: GetServerSideProps = async (ctx) => {
+  const session = (await getServerSession(ctx.req, ctx.res, authOptions)) as Session | null
+
+  if (session && !isExpired(session.expiresAt)) {
+    return { redirect: { destination: '/dashboard', permanent: false } }
+  }
+
+  return { redirect: { destination: '/signin', permanent: false } }
+}
+
+export default function HomeRedirect() {
+  return null
 }
