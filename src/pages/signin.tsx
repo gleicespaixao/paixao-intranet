@@ -1,7 +1,8 @@
 import { useState } from 'react'
 import { useRouter } from 'next/router'
 import { signIn } from 'next-auth/react'
-import { Box, Button, Card, Heading, Input, Alert, Field } from '@chakra-ui/react'
+import { Box, Button, Card, Heading, Text, Input, Alert, Field, Link } from '@chakra-ui/react'
+import NextLink from 'next/link'
 import { Form } from '@/components/form'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
@@ -76,6 +77,11 @@ export default function SignInPage() {
                 <Input {...register('password')} type="password" placeholder="••••••" />
                 <Field.ErrorText>{errors.password?.message}</Field.ErrorText>
               </Field.Root>
+              <Text mt="3" fontSize="sm">
+                <Link asChild colorPalette="teal">
+                  <NextLink href="/forgot-password">Esqueci minha senha</NextLink>
+                </Link>
+              </Text>
 
               <Button type="submit" colorPalette="teal" loading={isSubmitting} disabled={isSubmitting}>
                 Entrar
