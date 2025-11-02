@@ -16,5 +16,5 @@ const DashboardPage: NextPageWithLayout = () => {
   )
 }
 
-DashboardPage.getLayout = (page) => <AppLayout>{page}</AppLayout>
+DashboardPage.getLayout = (page) => <AppLayout title="Dashboard">{page}</AppLayout>
 export default DashboardPage

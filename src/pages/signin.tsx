@@ -7,6 +7,7 @@ import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { LoginForm, schemaLogin } from '@/schemas/login'
 import { withGuestGSSP } from '@/server/guest-ssr'
+import { Seo } from '@/components/seo'
 
 export const getServerSideProps = withGuestGSSP()()
 
@@ -46,40 +47,43 @@ export default function SignInPage() {
   }
 
   return (
-    <Box minH="100dvh" display="grid" placeItems="center" p="6">
-      <Card.Root w="full" maxW="sm">
-        <Card.Body>
-          <Form w="full" maxW="md" hookFormHandleSubmit={handleSubmit} onSubmit={onSubmit}>
-            <Heading size="lg" textAlign="center">
-              Entrar
-            </Heading>
+    <>
+      <Seo title="Login" noIndex />
+      <Box minH="100dvh" display="grid" placeItems="center" p="6">
+        <Card.Root w="full" maxW="sm">
+          <Card.Body>
+            <Form w="full" maxW="md" hookFormHandleSubmit={handleSubmit} onSubmit={onSubmit}>
+              <Heading size="lg" textAlign="center">
+                Entrar
+              </Heading>
 
-            {errorMsg && (
-              <Alert.Root status="error" borderRadius="md">
-                <Alert.Indicator />
-                {errorMsg}
-              </Alert.Root>
-            )}
+              {errorMsg && (
+                <Alert.Root status="error" borderRadius="md">
+                  <Alert.Indicator />
+                  {errorMsg}
+                </Alert.Root>
+              )}
 
-            <Field.Root invalid={!!errors.identifier}>
-              <Field.Label>Usuário ou e-mail</Field.Label>
-              <Input {...register('identifier')} placeholder="seu.usuario ou email@dominio.com" autoFocus />
-              <Field.ErrorText>{errors.identifier?.message}</Field.ErrorText>
-            </Field.Root>
+              <Field.Root invalid={!!errors.identifier}>
+                <Field.Label>Usuário ou e-mail</Field.Label>
+                <Input {...register('identifier')} placeholder="seu.usuario ou email@dominio.com" autoFocus />
+                <Field.ErrorText>{errors.identifier?.message}</Field.ErrorText>
+              </Field.Root>
 
-            {/* password */}
-            <Field.Root invalid={!!errors.password}>
-              <Field.Label>Senha</Field.Label>
-              <Input {...register('password')} type="password" placeholder="••••••" />
-              <Field.ErrorText>{errors.password?.message}</Field.ErrorText>
-            </Field.Root>
+              {/* password */}
+              <Field.Root invalid={!!errors.password}>
+                <Field.Label>Senha</Field.Label>
+                <Input {...register('password')} type="password" placeholder="••••••" />
+                <Field.ErrorText>{errors.password?.message}</Field.ErrorText>
+              </Field.Root>
 
-            <Button type="submit" colorPalette="teal" loading={isSubmitting} disabled={isSubmitting}>
-              Entrar
-            </Button>
-          </Form>
-        </Card.Body>
-      </Card.Root>
-    </Box>
+              <Button type="submit" colorPalette="teal" loading={isSubmitting} disabled={isSubmitting}>
+                Entrar
+              </Button>
+            </Form>
+          </Card.Body>
+        </Card.Root>
+      </Box>
+    </>
   )
 }
