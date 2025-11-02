@@ -1,8 +1,12 @@
-import type { NextConfig } from "next";
+import type { NextConfig } from 'next'
+
+if (process.env.NODE_ENV === 'development') {
+  process.env['NODE_TLS_REJECT_UNAUTHORIZED'] = '0'
+}
 
 const nextConfig: NextConfig = {
   /* config options here */
-  reactStrictMode: true,
-};
+  reactStrictMode: true
+}
 
-export default nextConfig;
+export default nextConfig
