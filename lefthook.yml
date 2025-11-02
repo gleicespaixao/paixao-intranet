@@ -1,0 +1,14 @@
+pre-commit:
+  parallel: true
+  commands:
+    prettier:
+      glob: '*.{js,jsx,ts,tsx,css,md,json}'
+      run: yarn prettier --write {staged_files} && git add {staged_files}
+    eslint:
+      glob: '*.{js,jsx,ts,tsx}'
+      run: yarn eslint --max-warnings=0 {staged_files}
+
+pre-push:
+  commands:
+    typecheck:
+      run: yarn typecheck
