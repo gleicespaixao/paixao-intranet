@@ -16,7 +16,6 @@ export type ApiUser = {
   dateBirth: string
   showDateBirth: boolean
   email: string
-  ddd: number
   phone: string
   username: string
   profile: ApiProfile[]
