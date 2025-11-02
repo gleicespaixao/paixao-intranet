@@ -9,7 +9,7 @@ export async function middleware(req: NextRequest) {
   const url = req.nextUrl
   const pathname = url.pathname
 
-  const token = await getToken<JWT>({ req, secret: process.env.NEXTAUTH_SECRET })
+  const token = (await getToken({ req, secret: process.env.NEXTAUTH_SECRET })) as JWT | null
 
   const isAuthPage = pathname.startsWith('/auth')
   const isPrivate = pathname.startsWith('/dashboard') // adicione mais padrões se quiser
