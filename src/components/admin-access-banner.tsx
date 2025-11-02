@@ -14,7 +14,7 @@ export function AdminAccessBanner() {
 
   return (
     <Box position="sticky" top="0" zIndex="banner" bg="bg.canvas">
-      <Container maxW="6xl" px="4" py="2">
+      <Container maxW="8xl" px="4" py="2">
         <Alert.Root status="error" borderRadius="md">
           <Alert.Indicator />
           <Text fontWeight="medium">
