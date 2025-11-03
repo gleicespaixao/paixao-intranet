@@ -34,6 +34,9 @@ export function Seo({ title, description = DEFAULT_DESC, noIndex, noFollow, cano
 
       {/* Canonical */}
       <link rel="canonical" href={url} />
+
+      <meta name="handheldFriendly" content="true" />
+      <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
     </Head>
   )
 }
