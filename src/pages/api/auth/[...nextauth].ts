@@ -19,7 +19,7 @@ function hasApiPayload(
 
 export const authOptions: NextAuthOptions = {
   session: { strategy: 'jwt' },
-  pages: { signIn: '/auth/signin' },
+  pages: { signIn: '/auth/sign-in' },
   providers: [
     Credentials({
       name: 'Credentials-login',

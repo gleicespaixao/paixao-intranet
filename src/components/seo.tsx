@@ -9,8 +9,8 @@ type SeoProps = {
   canonical?: string
 }
 
-const SITE_NAME = 'Paixão Intranet'
-const DEFAULT_DESC = 'Intranet Paixão'
+const SITE_NAME = 'SisPa'
+const DEFAULT_DESC = 'Plataforma para regenciamento de imóveis (SisPa)'
 const BASE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? 'http://localhost:3000'
 
 export function Seo({ title, description = DEFAULT_DESC, noIndex, noFollow, canonical }: SeoProps) {

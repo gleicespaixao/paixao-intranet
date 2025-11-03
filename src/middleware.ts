@@ -16,19 +16,19 @@ export async function middleware(req: NextRequest) {
 
   if (token && isAuthPage) {
     if (isExpired(token.expiresAt)) {
-      return NextResponse.redirect(new URL('/signin', req.url))
+      return NextResponse.redirect(new URL('/sign-in', req.url))
     }
     return NextResponse.redirect(new URL('/dashboard', req.url))
   }
 
   if (isPrivate && !token) {
-    const signin = new URL('/signin', req.url)
+    const signin = new URL('/sign-in', req.url)
     signin.searchParams.set('callbackUrl', url.pathname + url.search)
     return NextResponse.redirect(signin)
   }
 
   if (isPrivate && token && isExpired(token.expiresAt)) {
-    const signin = new URL('/signin', req.url)
+    const signin = new URL('/sign-in', req.url)
     signin.searchParams.set('callbackUrl', url.pathname + url.search)
     return NextResponse.redirect(signin)
   }

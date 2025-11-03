@@ -10,25 +10,38 @@ import { LuMoon, LuSun } from 'react-icons/lu'
 export type ColorModeProviderProps = ThemeProviderProps
 
 export function ColorModeProvider(props: ColorModeProviderProps) {
-  return <ThemeProvider attribute="class" disableTransitionOnChange {...props} />
+  return (
+    <ThemeProvider
+      attribute="class"
+      defaultTheme="system" // ✅ segue o sistema por padrão
+      enableSystem // ✅ habilita prefers-color-scheme
+      disableTransitionOnChange
+      {...props}
+    />
+  )
 }
 
-export type ColorMode = 'light' | 'dark'
+export type ColorMode = 'light' | 'dark' | 'system'
 
 export interface UseColorModeReturn {
-  colorMode: ColorMode
+  /** resolvedTheme retorna 'light' | 'dark' (não 'system') */
+  colorMode: Exclude<ColorMode, 'system'>
+  /** aceita inclusive 'system' para persistir a preferência */
   setColorMode: (colorMode: ColorMode) => void
+  /** alterna apenas entre light/dark */
   toggleColorMode: () => void
 }
 
 export function useColorMode(): UseColorModeReturn {
   const { resolvedTheme, setTheme } = useTheme()
+
   const toggleColorMode = () => {
     setTheme(resolvedTheme === 'dark' ? 'light' : 'dark')
   }
+
   return {
-    colorMode: resolvedTheme as ColorMode,
-    setColorMode: setTheme,
+    colorMode: resolvedTheme as 'light' | 'dark',
+    setColorMode: setTheme, // pode receber 'light' | 'dark' | 'system'
     toggleColorMode
   }
 }
@@ -53,15 +66,12 @@ export const ColorModeButton = React.forwardRef<HTMLButtonElement, ColorModeButt
         <IconButton
           onClick={toggleColorMode}
           variant="ghost"
-          aria-label="Toggle color mode"
+          aria-label="Alternar tema"
           size="sm"
           ref={ref}
           {...props}
           css={{
-            _icon: {
-              width: '5',
-              height: '5'
-            }
+            _icon: { width: '5', height: '5' }
           }}
         >
           <ColorModeIcon />

@@ -16,7 +16,7 @@ export function withAuthGSSP<
   P extends Record<string, unknown> = Record<string, never>,
   Q extends ParsedUrlQuery = ParsedUrlQuery
 >(options?: { signinPath?: string }) {
-  const signinPath = options?.signinPath ?? '/signin'
+  const signinPath = options?.signinPath ?? '/sign-in'
 
   return (handler?: Handler<P, Q>): GetServerSideProps<P, Q> => {
     return async (ctx) => {

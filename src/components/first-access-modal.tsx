@@ -5,8 +5,9 @@ import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { api } from '@/lib/api'
 import { getApiErrorMessage } from '@/lib/http-error'
-import { schemaUpdatePassword, type UpdatePasswordForm } from '@/schemas/password'
-import { Dialog, Button, Field, Fieldset, Input, Stack, Text, Alert } from '@chakra-ui/react'
+import { Dialog, Button, Fieldset, Stack, Text, Alert } from '@chakra-ui/react'
+import { ControlledPasswordInput } from '@/components/controlled-password-input'
+import { schemaUpdatePassword, UpdatePasswordForm } from '@/schemas/password'
 
 export function FirstAccessModal() {
   const { data: session } = useSession()
@@ -15,12 +16,11 @@ export function FirstAccessModal() {
   const isFirstAccess = session?.user?.firstAccess === true
   const userEmail = session?.user?.email ?? ''
 
-  // flag local para esconder o modal depois do fluxo completar
   const [completed, setCompleted] = useState(false)
   const [apiError, setApiError] = useState<string | null>(null)
 
   const {
-    register,
+    control,
     handleSubmit,
     formState: { errors, isSubmitting },
     reset
@@ -29,7 +29,6 @@ export function FirstAccessModal() {
     defaultValues: { oldPassword: '', newPassword: '', confirmPassword: '' }
   })
 
-  // ✅ Deriva o estado "open" sem setState em effect
   const open = isFirstAccess && !completed
   const canSubmit = useMemo(() => !!userEmail, [userEmail])
 
@@ -38,7 +37,7 @@ export function FirstAccessModal() {
     try {
       await api.post('/Authentication/update-password', { oldPassword, newPassword })
 
-      // Reloga com a nova senha para atualizar a sessão
+      // relogar com a nova senha para atualizar a sessão
       const res = await signIn('credentials', {
         redirect: false,
         identifier: userEmail,
@@ -46,13 +45,12 @@ export function FirstAccessModal() {
       })
 
       reset()
-      setCompleted(true) // fecha o modal (open passa a ser false)
+      setCompleted(true)
 
       if (res?.ok) {
-        // permanece ou redireciona se quiser
-        // await router.replace('/dashboard')
+        // ok: permanece na página
       } else {
-        await router.replace('/signin')
+        await router.replace('/sign-in')
       }
     } catch (err) {
       setApiError(getApiErrorMessage(err) ?? 'Não foi possível atualizar a senha.')
@@ -68,8 +66,6 @@ export function FirstAccessModal() {
         <Dialog.Content>
           <Dialog.Header>
             <Dialog.Title>Defina sua nova senha</Dialog.Title>
-            {/* Remova o CloseTrigger se quiser tornar o modal obrigatório */}
-            {/* <Dialog.CloseTrigger aria-label="Fechar" /> */}
           </Dialog.Header>
 
           <Dialog.Body>
@@ -85,24 +81,30 @@ export function FirstAccessModal() {
                 </Alert.Root>
               )}
 
-              <Fieldset.Root>
-                <Field.Root invalid={!!errors.oldPassword}>
-                  <Field.Label>Senha provisória</Field.Label>
-                  <Input {...register('oldPassword')} type="password" autoFocus />
-                  <Field.ErrorText>{errors.oldPassword?.message}</Field.ErrorText>
-                </Field.Root>
+              <Fieldset.Root gap="2">
+                <ControlledPasswordInput<UpdatePasswordForm>
+                  name="oldPassword"
+                  control={control}
+                  label="Senha provisória"
+                  error={errors.oldPassword?.message}
+                  autoFocus
+                />
 
-                <Field.Root invalid={!!errors.newPassword}>
-                  <Field.Label>Nova senha</Field.Label>
-                  <Input {...register('newPassword')} type="password" />
-                  <Field.ErrorText>{errors.newPassword?.message}</Field.ErrorText>
-                </Field.Root>
+                <ControlledPasswordInput<UpdatePasswordForm>
+                  name="newPassword"
+                  control={control}
+                  label="Nova senha"
+                  error={errors.newPassword?.message}
+                  showStrengthMeter
+                />
 
-                <Field.Root invalid={!!errors.confirmPassword}>
-                  <Field.Label>Confirmar nova senha</Field.Label>
-                  <Input {...register('confirmPassword')} type="password" />
-                  <Field.ErrorText>{errors.confirmPassword?.message}</Field.ErrorText>
-                </Field.Root>
+                <ControlledPasswordInput<UpdatePasswordForm>
+                  name="confirmPassword"
+                  control={control}
+                  label="Confirmar nova senha"
+                  showStrengthMeter
+                  error={errors.confirmPassword?.message}
+                />
               </Fieldset.Root>
 
               <Button type="submit" colorPalette="teal" loading={isSubmitting} disabled={isSubmitting || !canSubmit}>
