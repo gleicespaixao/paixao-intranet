@@ -9,6 +9,7 @@ import { ItemRoot } from './item-root'
 import { BiCog } from 'react-icons/bi'
 import { UserMenu } from './user-menu'
 import { sidebarData } from './data'
+import { ColorModeMenuButton } from './color-mode-menu'
 
 export function SidebarContent({
   withinDrawer = false,
@@ -107,9 +108,11 @@ export function SidebarContent({
 
       <VStack align="stretch" gap="2">
         <Separator />
+        <ColorModeMenuButton />
+        <Separator />
         <ItemRoot
           label="Configurações"
-          href="/settings"
+          href="/"
           icon={BiCog}
           isActive={isActive('/settings')}
           onNavigate={withinDrawer ? onNavigate : undefined}
