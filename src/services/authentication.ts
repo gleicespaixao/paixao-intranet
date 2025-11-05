@@ -60,3 +60,19 @@ export async function loginWithCredentials(payload: LoginPayload): Promise<Resul
     return { success: false, error: message, status }
   }
 }
+
+export type UpdatePasswordPayload = {
+  oldPassword: string
+  newPassword: string
+}
+
+/** Primeiro acesso / troca de senha provisória */
+export async function updatePassword(payload: UpdatePasswordPayload): Promise<Result<null>> {
+  try {
+    await api.post('/Authentication/update-password', payload)
+    return { success: true, data: null }
+  } catch (err) {
+    const { message, status } = getApiErrorMessage(err)
+    return { success: false, error: message, status }
+  }
+}

@@ -3,11 +3,10 @@ import { useSession, signIn } from 'next-auth/react'
 import { useRouter } from 'next/router'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { api } from '@/lib/api'
-import { getApiErrorMessage } from '@/lib/http-error'
 import { Dialog, Button, Fieldset, Stack, Text, Alert } from '@chakra-ui/react'
 import { ControlledPasswordInput } from '@/components/controlled-password-input'
 import { schemaUpdatePassword, UpdatePasswordForm } from '@/schemas/password'
+import { updatePassword } from '@/services/authentication'
 
 export function FirstAccessModal() {
   const { data: session } = useSession()
@@ -34,26 +33,27 @@ export function FirstAccessModal() {
 
   const onSubmit = async ({ oldPassword, newPassword }: UpdatePasswordForm) => {
     setApiError(null)
-    try {
-      await api.post('/Authentication/update-password', { oldPassword, newPassword })
 
-      // relogar com a nova senha para atualizar a sessão
-      const res = await signIn('credentials', {
-        redirect: false,
-        identifier: userEmail,
-        password: newPassword
-      })
+    const res = await updatePassword({ oldPassword, newPassword })
+    if (!res.success) {
+      setApiError(res.error || 'Não foi possível atualizar a senha.')
+      return
+    }
 
-      reset()
-      setCompleted(true)
+    // relogar com a nova senha para atualizar a sessão
+    const login = await signIn('credentials', {
+      redirect: false,
+      identifier: userEmail,
+      password: newPassword
+    })
 
-      if (res?.ok) {
-        // ok: permanece na página
-      } else {
-        await router.replace('/sign-in')
-      }
-    } catch (err) {
-      setApiError(getApiErrorMessage(err) ?? 'Não foi possível atualizar a senha.')
+    reset()
+    setCompleted(true)
+
+    if (login?.ok) {
+      // permanece na página
+    } else {
+      await router.replace('/sign-in')
     }
   }
 
