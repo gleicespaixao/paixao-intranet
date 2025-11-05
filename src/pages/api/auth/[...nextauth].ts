@@ -1,15 +1,8 @@
+// src/pages/api/auth/[...nextauth].ts
 import NextAuth, { NextAuthOptions } from 'next-auth'
 import Credentials from 'next-auth/providers/credentials'
-import { api } from '@/lib/api'
-import type { ApiUser } from '@/types/next-auth' // reutiliza os tipos
-import { getApiErrorMessage } from '@/lib/http-error'
-
-type ApiAuthResponse = {
-  token: string
-  expiration: string // ISO
-  adminAccess: boolean
-  user: ApiUser
-}
+import type { ApiUser } from '@/types/next-auth'
+import { loginWithCredentials } from '@/services/authentication'
 
 function hasApiPayload(
   user: unknown
@@ -30,37 +23,35 @@ export const authOptions: NextAuthOptions = {
       async authorize(credentials) {
         if (!credentials?.identifier || !credentials?.password) return null
 
-        try {
-          const { data } = await api.post<ApiAuthResponse>('/authentication/login', {
-            identifier: credentials.identifier,
-            password: credentials.password
-          })
+        const res = await loginWithCredentials({
+          identifier: credentials.identifier,
+          password: credentials.password
+        })
 
-          if (!data?.token) {
-            throw new Error('Resposta inválida da API.')
-          }
+        if (!res.success) {
+          // NextAuth exibe a message se você lançar Error
+          throw new Error(res.error || 'Falha ao autenticar.')
+        }
 
-          return {
-            id: data.user.id,
-            name: `${data.user.name} ${data.user.surname}`.trim(),
-            email: data.user.email,
-            _api: {
-              accessToken: data.token,
-              expiresAt: data.expiration,
-              adminAccess: data.adminAccess,
-              user: data.user
-            }
+        const { token, expiration, adminAccess, user } = res.data
+
+        return {
+          id: user.id,
+          name: `${user.name ?? ''} ${user.surname ?? ''}`.trim(),
+          email: user.email,
+          _api: {
+            accessToken: token,
+            expiresAt: expiration,
+            adminAccess,
+            user
           }
-        } catch (err) {
-          const apiMsg = getApiErrorMessage(err) ?? 'Falha ao autenticar.'
-          throw new Error(apiMsg)
         }
       }
     })
   ],
   callbacks: {
     async jwt({ token, user }) {
-      // 1ª passada após login: mover dados do authorize (user._api) para o JWT
+      // Primeira passada após authorize(): transfere payload para o JWT
       if (user && hasApiPayload(user)) {
         token.accessToken = user._api.accessToken
         token.expiresAt = user._api.expiresAt
@@ -68,9 +59,9 @@ export const authOptions: NextAuthOptions = {
         token.user = user._api.user
       }
 
-      // (Opcional) invalidar se expirado. Ou faça refresh aqui se sua API suportar.
+      // (Opcional) invalidar/refresh
       if (token.expiresAt && Date.now() > Date.parse(token.expiresAt)) {
-        // Exemplo simples: limpar payload para forçar re-login depois
+        // Ex.: apagar para forçar re-login (ou implementar refresh aqui)
         // delete token.accessToken
         // delete token.user
       }
@@ -78,13 +69,11 @@ export const authOptions: NextAuthOptions = {
       return token
     },
     async session({ session, token }) {
-      // Expor no client o que guardamos no JWT
-      session.accessToken = token.accessToken
-      session.expiresAt = token.expiresAt
-      session.adminAccess = token.adminAccess
+      session.accessToken = token.accessToken as string | undefined
+      session.expiresAt = token.expiresAt as string | undefined
+      session.adminAccess = token.adminAccess as boolean | undefined
       if (token.user) {
-        // mescla info detalhada no session.user sem perder name/email/image do NextAuth
-        session.user = { ...session.user, ...token.user }
+        session.user = { ...session.user, ...(token.user as ApiUser) }
       }
       return session
     }

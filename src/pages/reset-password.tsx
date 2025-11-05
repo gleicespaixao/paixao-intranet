@@ -3,8 +3,6 @@ import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useRouter } from 'next/router'
 import { signIn } from 'next-auth/react'
-import { api } from '@/lib/api'
-import { getApiErrorMessage } from '@/lib/http-error'
 import { schemaResetPassword, type ResetPasswordForm } from '@/schemas/password'
 import { Box, Button, Card, Heading, Fieldset, Alert, Text, Link, Stack } from '@chakra-ui/react'
 import NextLink from 'next/link'
@@ -14,13 +12,7 @@ import { withGuestGSSP } from '@/server/guest-ssr'
 import { ControlledPasswordInput } from '@/components/controlled-password-input'
 import { ControlledInput } from '@/components/controlled-input'
 import { Logotipo } from '@/components/logotipo'
-
-type ApiAuthResponse = {
-  token: string
-  expiration: string
-  adminAccess: boolean
-  user: { email: string; name?: string; surname?: string; id: string }
-}
+import { resetPassword } from '@/services/authentication'
 
 export const getServerSideProps = withGuestGSSP()()
 
@@ -45,26 +37,24 @@ export default function ResetPasswordPage() {
 
   const onSubmit = async ({ password, token }: ResetPasswordForm) => {
     setError(null)
-    try {
-      const { data } = await api.post<ApiAuthResponse>('/Authentication/reset-password', {
-        password,
-        token
-      })
 
-      // login automático com o e-mail retornado + nova senha
-      const res = await signIn('credentials', {
-        redirect: false,
-        identifier: data.user.email,
-        password
-      })
+    const res = await resetPassword({ password, token })
+    if (!res.success) {
+      setError(res.error || 'Falha ao redefinir a senha.')
+      return
+    }
 
-      if (res?.ok) {
-        await router.replace('/dashboard')
-      } else {
-        await router.replace('/signin') // corrigido
-      }
-    } catch (err) {
-      setError(getApiErrorMessage(err) ?? 'Falha ao redefinir a senha.')
+    // login automático com o e-mail retornado + nova senha
+    const login = await signIn('credentials', {
+      redirect: false,
+      identifier: res.data.user.email,
+      password
+    })
+
+    if (login?.ok) {
+      await router.replace('/dashboard')
+    } else {
+      await router.replace('/sign-in')
     }
   }
 

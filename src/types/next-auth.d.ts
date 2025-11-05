@@ -1,12 +1,5 @@
 import 'next-auth'
-import type { DefaultSession, DefaultUser } from 'next-auth'
-
-export type ApiProfile = {
-  id: string
-  token: number
-  name: string
-  operation: string | null
-}
+import { DefaultSession } from 'next-auth'
 
 export type ApiUser = {
   id: string
@@ -31,15 +24,6 @@ declare module 'next-auth' {
     adminAccess?: boolean
     user: DefaultSession['user'] & Partial<ApiUser>
   }
-
-  interface User extends DefaultUser {
-    _api?: {
-      accessToken: string
-      expiresAt: string
-      adminAccess: boolean
-      user: ApiUser
-    }
-  }
 }
 
 declare module 'next-auth/jwt' {
@@ -50,5 +34,3 @@ declare module 'next-auth/jwt' {
     user?: ApiUser
   }
 }
-
-export {}

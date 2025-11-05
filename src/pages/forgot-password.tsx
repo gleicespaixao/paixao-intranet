@@ -1,8 +1,6 @@
 import { useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { api } from '@/lib/api'
-import { getApiErrorMessage } from '@/lib/http-error'
 import { schemaRequestReset, type RequestResetForm } from '@/schemas/password'
 import { Box, Button, Card, Heading, Alert, Fieldset, Text, Link, Stack } from '@chakra-ui/react'
 import NextLink from 'next/link'
@@ -11,6 +9,7 @@ import { Seo } from '@/components/seo'
 import { withGuestGSSP } from '@/server/guest-ssr'
 import { ControlledInput } from '@/components/controlled-input'
 import { Logotipo } from '@/components/logotipo'
+import { requestPasswordReset } from '@/services/authentication'
 
 export const getServerSideProps = withGuestGSSP()()
 
@@ -29,12 +28,12 @@ export default function ForgotPasswordPage() {
 
   const onSubmit = async ({ identifier }: RequestResetForm) => {
     setApiMsg(null)
-    try {
-      const { data } = await api.post<{ email: string }>('/Authentication/request-password-reset', { identifier })
-      setApiMsg(`Enviamos um e-mail para: ${data.email}. Verifique sua caixa de entrada.`)
+    const res = await requestPasswordReset({ identifier })
+    if (res.success) {
+      setApiMsg(`Enviamos um e-mail para: ${res.data.email}. Verifique sua caixa de entrada.`)
       reset({ identifier })
-    } catch (err) {
-      setApiMsg(getApiErrorMessage(err) ?? 'Não foi possível solicitar a redefinição.')
+    } else {
+      setApiMsg(res.error || 'Não foi possível solicitar a redefinição.')
     }
   }
 
