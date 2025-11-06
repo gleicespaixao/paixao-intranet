@@ -3,7 +3,7 @@ import { Box, Heading, Text, Stack } from '@chakra-ui/react'
 import { AppLayout } from '@/components/layout/app-layout'
 import { withAuthGSSP } from '@/server/auth-ssr'
 
-export const getServerSideProps = withAuthGSSP()()
+export const getServerSideProps = withAuthGSSP()
 
 const DashboardPage: NextPageWithLayout = () => {
   return (

@@ -1,5 +1,6 @@
 import axios from 'axios'
 import { envConfig } from './env'
+import { getApiAccessToken } from './token-store'
 
 export const api = axios.create({
   baseURL: envConfig.apiBaseUrl,
@@ -9,4 +10,13 @@ export const api = axios.create({
     'X-Platform-Token': envConfig.xPlatformToken
   },
   withCredentials: true
+})
+
+api.interceptors.request.use((config) => {
+  const token = getApiAccessToken()
+  if (token && !config.headers?.Authorization) {
+    config.headers = config.headers ?? {}
+    config.headers.Authorization = `Bearer ${token}`
+  }
+  return config
 })
