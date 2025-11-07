@@ -1,6 +1,7 @@
 import * as React from 'react'
 import { Controller, type Control, type FieldValues, type Path } from 'react-hook-form'
-import { Field, Input as CInput, Group, InputAddon, type InputProps as ChakraInputProps } from '@chakra-ui/react'
+import { Field, Input as CInput, type InputProps as ChakraInputProps } from '@chakra-ui/react'
+import { InputGroup } from '../ui/input-group'
 
 type PassThroughProps = Omit<ChakraInputProps, 'name' | 'value' | 'onChange' | 'onBlur' | 'ref' | 'type'>
 
@@ -11,8 +12,9 @@ export type ControlledInputProps<TFieldValues extends FieldValues> = PassThrough
   error?: string
   invalid?: boolean
   type?: React.HTMLInputTypeAttribute
-  inputAddonLeft?: React.ReactNode
-  inputAddonRight?: React.ReactNode
+  startElement?: React.ReactNode
+  endElement?: React.ReactNode
+  ref?: React.Ref<HTMLInputElement>
 }
 
 export function ControlledInput<TFieldValues extends FieldValues>({
@@ -22,12 +24,10 @@ export function ControlledInput<TFieldValues extends FieldValues>({
   error,
   invalid,
   type = 'text',
-  inputAddonLeft,
-  inputAddonRight,
+  startElement,
+  endElement,
   ...rest
 }: ControlledInputProps<TFieldValues>) {
-  const hasAddon = Boolean(inputAddonLeft || inputAddonRight)
-
   return (
     <Controller
       name={name}
@@ -36,15 +36,9 @@ export function ControlledInput<TFieldValues extends FieldValues>({
         <Field.Root invalid={Boolean(error) || Boolean(invalid)}>
           {label ? <Field.Label>{label}</Field.Label> : null}
 
-          {hasAddon ? (
-            <Group attached w="full">
-              {inputAddonLeft ? <InputAddon>{inputAddonLeft}</InputAddon> : null}
-              <CInput type={type} {...field} {...rest} />
-              {inputAddonRight ? <InputAddon>{inputAddonRight}</InputAddon> : null}
-            </Group>
-          ) : (
+          <InputGroup w="full" startElement={startElement} endElement={endElement}>
             <CInput type={type} {...field} {...rest} />
-          )}
+          </InputGroup>
 
           {error ? <Field.ErrorText>{error}</Field.ErrorText> : null}
         </Field.Root>

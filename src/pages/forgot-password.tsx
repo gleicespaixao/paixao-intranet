@@ -7,7 +7,7 @@ import NextLink from 'next/link'
 import { Form } from '@/components/form'
 import { Seo } from '@/components/seo'
 import { withGuestGSSP } from '@/server/guest-ssr'
-import { ControlledInput } from '@/components/controlled-input'
+import { ControlledInput } from '@/components/controlled-input/controlled-input'
 import { Logotipo } from '@/components/logotipo'
 import { requestPasswordReset } from '@/services/authentication'
 

@@ -17,7 +17,7 @@ export const schemaResetPassword = z
   })
 export type ResetPasswordForm = z.infer<typeof schemaResetPassword>
 
-export const schemaUpdatePassword = z
+export const schemaPasswordUpdate = z
   .object({
     oldPassword: z.string().min(1, 'Informe a senha provisória'),
     newPassword: z.string().min(6, 'Mínimo de 6 caracteres'),
@@ -28,4 +28,10 @@ export const schemaUpdatePassword = z
     path: ['confirmPassword']
   })
 
-export type UpdatePasswordForm = z.infer<typeof schemaUpdatePassword>
+export type PasswordUpdateForm = z.infer<typeof schemaPasswordUpdate>
+
+export const schemaInternalPasswordUpdate = z.object({
+  currentPassword: z.string().min(1, 'Informe sua senha atual'),
+  newPassword: z.string().min(6, 'A nova senha deve ter ao menos 6 caracteres')
+})
+export type InternalPasswordUpdateForm = z.infer<typeof schemaInternalPasswordUpdate>

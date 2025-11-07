@@ -4,9 +4,9 @@ import { useRouter } from 'next/router'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { Dialog, Button, Fieldset, Stack, Text, Alert } from '@chakra-ui/react'
-import { ControlledPasswordInput } from '@/components/controlled-password-input'
-import { schemaUpdatePassword, UpdatePasswordForm } from '@/schemas/password'
+import { ControlledPasswordInput } from '@/components/controlled-input/controlled-password-input'
 import { updatePassword } from '@/services/authentication'
+import { PasswordUpdateForm, schemaPasswordUpdate } from '@/schemas/password'
 
 export function FirstAccessModal() {
   const { data: session } = useSession()
@@ -23,15 +23,15 @@ export function FirstAccessModal() {
     handleSubmit,
     formState: { errors, isSubmitting },
     reset
-  } = useForm<UpdatePasswordForm>({
-    resolver: zodResolver(schemaUpdatePassword),
+  } = useForm<PasswordUpdateForm>({
+    resolver: zodResolver(schemaPasswordUpdate),
     defaultValues: { oldPassword: '', newPassword: '', confirmPassword: '' }
   })
 
   const open = isFirstAccess && !completed
   const canSubmit = useMemo(() => !!userEmail, [userEmail])
 
-  const onSubmit = async ({ oldPassword, newPassword }: UpdatePasswordForm) => {
+  const onSubmit = async ({ oldPassword, newPassword }: PasswordUpdateForm) => {
     setApiError(null)
 
     const res = await updatePassword({ oldPassword, newPassword })
@@ -82,7 +82,7 @@ export function FirstAccessModal() {
               )}
 
               <Fieldset.Root gap="2">
-                <ControlledPasswordInput<UpdatePasswordForm>
+                <ControlledPasswordInput<PasswordUpdateForm>
                   name="oldPassword"
                   control={control}
                   label="Senha provisória"
@@ -90,7 +90,7 @@ export function FirstAccessModal() {
                   autoFocus
                 />
 
-                <ControlledPasswordInput<UpdatePasswordForm>
+                <ControlledPasswordInput<PasswordUpdateForm>
                   name="newPassword"
                   control={control}
                   label="Nova senha"
@@ -98,7 +98,7 @@ export function FirstAccessModal() {
                   showStrengthMeter
                 />
 
-                <ControlledPasswordInput<UpdatePasswordForm>
+                <ControlledPasswordInput<PasswordUpdateForm>
                   name="confirmPassword"
                   control={control}
                   label="Confirmar nova senha"

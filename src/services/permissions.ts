@@ -14,15 +14,3 @@ export async function fetchUserPermissions(): Promise<Result<string[]>> {
     return { success: false, error: message, status }
   }
 }
-
-export async function fetchUserPermissionsSSR(accessToken: string): Promise<Result<string[]>> {
-  try {
-    const { data } = await api.get<string[]>('/tools/system-permission', {
-      headers: { Authorization: `Bearer ${accessToken}` }
-    })
-    return { success: true, data: Array.from(new Set(data)) }
-  } catch (err) {
-    const { message, status } = getApiErrorMessage(err)
-    return { success: false, error: message, status }
-  }
-}

@@ -7,11 +7,11 @@ import NextLink from 'next/link'
 import { Form } from '@/components/form'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { LoginForm, schemaLogin } from '@/schemas/login'
+import { LoginForm, schemaSignIn } from '@/schemas/sign-in'
 import { withGuestGSSP } from '@/server/guest-ssr'
 import { Seo } from '@/components/seo'
-import { ControlledInput } from '@/components/controlled-input'
-import { ControlledPasswordInput } from '@/components/controlled-password-input'
+import { ControlledInput } from '@/components/controlled-input/controlled-input'
+import { ControlledPasswordInput } from '@/components/controlled-input/controlled-password-input'
 import { Logotipo } from '@/components/logotipo'
 
 export const getServerSideProps = withGuestGSSP()()
@@ -25,7 +25,7 @@ export default function SignInPage() {
     handleSubmit,
     formState: { errors, isSubmitting }
   } = useForm<LoginForm>({
-    resolver: zodResolver(schemaLogin),
+    resolver: zodResolver(schemaSignIn),
     defaultValues: { identifier: '', password: '' }
   })
 

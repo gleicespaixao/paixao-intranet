@@ -50,13 +50,17 @@ export const authOptions: NextAuthOptions = {
     })
   ],
   callbacks: {
-    async jwt({ token, user }) {
+    async jwt({ token, user, trigger, session }) {
       // Primeira passada após authorize(): transfere payload para o JWT
       if (user && hasApiPayload(user)) {
         token.accessToken = user._api.accessToken
         token.expiresAt = user._api.expiresAt
         token.adminAccess = user._api.adminAccess
         token.user = user._api.user
+      }
+
+      if (trigger === 'update' && session?.user) {
+        token.user = { ...(token.user ?? {}), ...(session.user as ApiUser) }
       }
 
       // (Opcional) invalidar/refresh

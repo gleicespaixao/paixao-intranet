@@ -1,7 +1,6 @@
 import type { GetServerSidePropsContext } from 'next'
 import { getServerSession } from 'next-auth/next'
 import { authOptions } from '@/pages/api/auth/[...nextauth]'
-import { fetchUserPermissionsSSR } from '@/services/permissions'
 
 const isExpired = (expiresAt?: string) => !!expiresAt && Date.now() > Date.parse(expiresAt)
 
@@ -17,16 +16,9 @@ export const withAuthGSSP = () => async (ctx: GetServerSidePropsContext) => {
       }
     }
   }
-  let initialPermissions: string[] = []
-  if (session.accessToken) {
-    const res = await fetchUserPermissionsSSR(session.accessToken)
-    if (res.success) initialPermissions = res.data
-  }
-
   return {
     props: toJSONSafe({
-      session,
-      initialPermissions
+      session
     })
   }
 }

@@ -69,7 +69,7 @@ export type UpdatePasswordPayload = {
 /** Primeiro acesso / troca de senha provisória */
 export async function updatePassword(payload: UpdatePasswordPayload): Promise<Result<null>> {
   try {
-    await api.post('/Authentication/update-password', payload)
+    await api.patch('/Authentication/update-password', payload)
     return { success: true, data: null }
   } catch (err) {
     const { message, status } = getApiErrorMessage(err)
