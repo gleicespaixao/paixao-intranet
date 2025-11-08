@@ -27,7 +27,17 @@ export function AppLayout({ children, title }: { children: ReactNode; title?: st
       </Drawer.Root>
 
       <Grid templateColumns={{ base: '1fr', md: '20rem 1fr' }} maxW="full">
-        <Box display={{ base: 'none', md: 'block' }} h="100dvh" position="sticky" zIndex={1} borderRightWidth="1px">
+        <Box
+          as="aside"
+          display={{ base: 'none', md: 'block' }}
+          position="sticky"
+          top="0"
+          alignSelf="start"
+          h="100dvh"
+          overflowY="auto"
+          borderRightWidth="1px"
+          bg="bg.surface"
+        >
           <SidebarContent />
         </Box>
 
