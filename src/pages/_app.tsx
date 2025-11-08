@@ -1,7 +1,7 @@
 import type { AppProps } from 'next/app'
 import { Provider } from '@/components/ui/provider'
 import { SessionProvider, useSession } from 'next-auth/react'
-import { NextPageWithLayout } from '@/types/next-page-with-layout'
+import { NextPageWithLayout } from '@/@types/next-page-with-layout'
 import { setApiAccessToken } from '@/lib/token-store'
 import { useEffect } from 'react'
 

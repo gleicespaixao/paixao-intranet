@@ -1,12 +1,12 @@
 import { ReactNode } from 'react'
 import { Box, Flex, Heading, Text, IconButton, Separator } from '@chakra-ui/react'
 import { BiArrowBack } from 'react-icons/bi'
-import { useRouter } from 'next/router'
+import NextLink from 'next/link'
 
 type PageHeaderProps = {
   title: string
   subtitle?: string
-  rightSlot?: ReactNode // ações à direita (botões, etc.)
+  rightSlot?: ReactNode
   backButton?: boolean
   withSeparator?: boolean
   mb?: number | string
@@ -20,19 +20,15 @@ export function PageHeader({
   withSeparator = true,
   mb = 6
 }: PageHeaderProps) {
-  const router = useRouter()
   return (
     <Box mb={mb}>
       <Flex align="center" gap={3}>
         {backButton && (
-          <IconButton
-            display={{ base: 'flex', md: 'none' }}
-            aria-label="Voltar"
-            variant="ghost"
-            onClick={() => router.back()}
-          >
-            <BiArrowBack />
-          </IconButton>
+          <NextLink href="/dashboard">
+            <IconButton display={{ base: 'flex', md: 'none' }} aria-label="Voltar" variant="ghost">
+              <BiArrowBack />
+            </IconButton>
+          </NextLink>
         )}
 
         <Box>

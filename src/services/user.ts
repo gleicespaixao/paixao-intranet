@@ -1,6 +1,6 @@
 import { api } from '@/lib/api'
 import { getApiErrorMessage } from '@/lib/http-error'
-import { ApiUser } from '@/types/next-auth'
+import { ApiUser } from '@/@types/next-auth'
 import { dateConverter } from '@/utils/date-converter'
 
 export type Result<T> = { success: true; data: T } | { success: false; error: string; status?: number }

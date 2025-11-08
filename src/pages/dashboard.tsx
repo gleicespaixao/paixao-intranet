@@ -1,4 +1,4 @@
-import type { NextPageWithLayout } from '@/types/next-page-with-layout'
+import type { NextPageWithLayout } from '@/@types/next-page-with-layout'
 import { Box, Heading, Text, Stack } from '@chakra-ui/react'
 import { AppLayout } from '@/components/layout/app-layout'
 import { withAuthGSSP } from '@/server/auth-ssr'

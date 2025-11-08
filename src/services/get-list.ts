@@ -1,6 +1,6 @@
 import { api } from '@/lib/api'
 import { getApiErrorMessage } from '@/lib/http-error'
-import { ApiListResponse, Result } from '@/types/api-list'
+import { ApiListResponse, Result } from '@/@types/api-list'
 import { AxiosRequestConfig } from 'axios'
 
 type ListParams = {

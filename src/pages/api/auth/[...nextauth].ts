@@ -1,7 +1,7 @@
 // src/pages/api/auth/[...nextauth].ts
 import NextAuth, { NextAuthOptions } from 'next-auth'
 import Credentials from 'next-auth/providers/credentials'
-import type { ApiUser } from '@/types/next-auth'
+import type { ApiUser } from '@/@types/next-auth'
 import { loginWithCredentials } from '@/services/authentication'
 
 function hasApiPayload(
