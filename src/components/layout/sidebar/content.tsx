@@ -58,7 +58,7 @@ export function SidebarContent({
               href={item.href}
               icon={item.icon}
               isActive={isActive(item.href)}
-              onNavigate={withinDrawer ? onNavigate : undefined}
+              onClick={withinDrawer ? onNavigate : undefined}
             />
           ))}
 
@@ -95,7 +95,7 @@ export function SidebarContent({
                           href={c.href}
                           isActive={isActive(c.href)}
                           isSubmenu
-                          onNavigate={withinDrawer ? onNavigate : undefined}
+                          onClick={withinDrawer ? onNavigate : undefined}
                         />
                       ))}
                     </VStack>
@@ -115,10 +115,10 @@ export function SidebarContent({
           href="/"
           icon={BiCog}
           isActive={isActive('/settings')}
-          onNavigate={withinDrawer ? onNavigate : undefined}
+          onClick={withinDrawer ? onNavigate : undefined}
         />
         <Separator />
-        <UserMenu />
+        <UserMenu onClick={withinDrawer ? onNavigate : undefined} />
       </VStack>
     </Box>
   )

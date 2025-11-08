@@ -3,7 +3,7 @@ import { HStack, Text, Box, Button, Avatar, Menu } from '@chakra-ui/react'
 import { BiDotsVerticalRounded, BiLogOut, BiUser } from 'react-icons/bi'
 import { signOut, useSession } from 'next-auth/react'
 
-export function UserMenu() {
+export function UserMenu({ onClick }: { onClick?: () => void }) {
   const { data: session } = useSession()
 
   return (
@@ -30,7 +30,7 @@ export function UserMenu() {
         </Menu.Trigger>
         <Menu.Positioner>
           <Menu.Content>
-            <NextLink href="/profile">
+            <NextLink href="/profile" onClick={onClick}>
               <Menu.Item value="profile" w="full" cursor="pointer">
                 <HStack w="full">
                   <BiUser />

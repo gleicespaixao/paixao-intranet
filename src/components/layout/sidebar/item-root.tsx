@@ -8,10 +8,10 @@ type ItemRootProps = {
   icon?: IconType
   isActive?: boolean
   isSubmenu?: boolean
-  onNavigate?: () => void
+  onClick?: () => void
 }
 
-export function ItemRoot({ label, href, icon, isActive, isSubmenu, onNavigate }: ItemRootProps) {
+export function ItemRoot({ label, href, icon, isActive, isSubmenu, onClick }: ItemRootProps) {
   const content = (
     <HStack
       px="3.5"
@@ -38,7 +38,7 @@ export function ItemRoot({ label, href, icon, isActive, isSubmenu, onNavigate }:
         color="fg"
         as={NextLink}
         href={href}
-        onClick={onNavigate}
+        onClick={onClick}
         _hover={{ textDecoration: 'none' }}
         display="block"
       >
@@ -48,7 +48,7 @@ export function ItemRoot({ label, href, icon, isActive, isSubmenu, onNavigate }:
   }
 
   return (
-    <Box as={Button} onClick={onNavigate} w="full" textAlign="left">
+    <Box as={Button} onClick={onClick} w="full" textAlign="left">
       {content}
     </Box>
   )
