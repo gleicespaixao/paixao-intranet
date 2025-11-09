@@ -1,5 +1,5 @@
 import { ReactNode } from 'react'
-import { Box, Flex, Heading, Text, IconButton, Separator } from '@chakra-ui/react'
+import { Box, Flex, Heading, Text, IconButton, Separator, Skeleton, Stack } from '@chakra-ui/react'
 import { BiArrowBack } from 'react-icons/bi'
 import NextLink from 'next/link'
 
@@ -8,8 +8,10 @@ type PageHeaderProps = {
   subtitle?: string
   rightSlot?: ReactNode
   backButton?: boolean
+  backButtonLink?: string
   withSeparator?: boolean
   mb?: number | string
+  loading?: boolean
 }
 
 export function PageHeader({
@@ -17,28 +19,38 @@ export function PageHeader({
   subtitle,
   rightSlot,
   backButton = false,
+  backButtonLink,
   withSeparator = true,
-  mb = 6
+  mb = 6,
+  loading = false
 }: PageHeaderProps) {
   return (
     <Box mb={mb}>
       <Flex align="center" gap={3}>
         {backButton && (
-          <NextLink href="/dashboard">
-            <IconButton display={{ base: 'flex', md: 'none' }} aria-label="Voltar" variant="ghost">
-              <BiArrowBack />
-            </IconButton>
-          </NextLink>
+          <Stack display={{ base: 'flex', md: 'none' }}>
+            <NextLink href={backButtonLink ?? '/dashboard'}>
+              <IconButton aria-label="Voltar" variant="ghost">
+                <BiArrowBack />
+              </IconButton>
+            </NextLink>
+          </Stack>
         )}
 
-        <Box>
-          <Heading size="lg">{title}</Heading>
+        <Stack>
+          <Heading size="lg">
+            <Skeleton height="6" loading={loading}>
+              {title}
+            </Skeleton>
+          </Heading>
           {subtitle && (
-            <Text fontSize="sm" color="fg.muted">
-              {subtitle}
-            </Text>
+            <Skeleton height="4" loading={loading}>
+              <Text fontSize="sm" color="fg.muted">
+                {subtitle}
+              </Text>
+            </Skeleton>
           )}
-        </Box>
+        </Stack>
 
         {rightSlot && <Flex ml="auto">{rightSlot}</Flex>}
       </Flex>

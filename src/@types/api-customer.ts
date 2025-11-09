@@ -1,7 +1,15 @@
+import { ApiLog } from './utils'
+
 import { ApiItemLinks } from './utils'
+export type CustomerStatus = 'active' | 'inactive' | 'paused'
+export type CustomermMaritalStatus = 'single' | 'married' | 'separated' | 'widowed' | 'other'
+export type CustomermPropertyProfilePurchaseGoals = 'none' | 'residence' | 'investment'
+export type CustomermPropertyProfileBedrooms = 'none' | 'one' | 'two' | 'three' | 'four_plus'
+export type CustomermPropertyProfileGarage = 'none' | 'one' | 'two' | 'three' | 'four_plus'
 
 export type ApiCustomer = {
   id: string
+  status: CustomerStatus
   token: number
   name: string
   phone: string
@@ -10,30 +18,10 @@ export type ApiCustomer = {
   cpf: string
   dateBirth: string
   profession: string
-  maritalStatus: 'single' | 'married' | 'separated' | 'widowed' | 'other'
-  spouse: ApiCustomerSpouse
-  company: ApiCustomerCompany[]
+  maritalStatus: CustomermMaritalStatus
   address: ApiCustomerAddress
   propertyProfile: ApiCustomerPropertyProfile
-  purchaseHistory: ApiCustomerPurchaseHistory
-}
-
-type ApiCustomerSpouse = {
-  name: string
-  phone: string
-  email: string
-  rg: string
-  cpf: string
-  profession: string
-  marriageDate: string
-}
-
-type ApiCustomerCompany = {
-  name: string
-  phone: string
-  email: string
-  cnpj: string
-  address: ApiCustomerAddress
+  logs: ApiLog
 }
 
 type ApiCustomerAddress = {
@@ -47,16 +35,27 @@ type ApiCustomerAddress = {
 }
 
 type ApiCustomerPropertyProfile = {
-  purchaseGoals: 'none' | 'residence' | 'investment'
+  purchaseGoals: CustomermPropertyProfilePurchaseGoals
   typeOfProperty: ApiItemLinks[]
   neighborhood: ApiItemLinks[]
-  bedrooms: 'none' | 'one' | 'two' | 'three' | 'four_plus'
-  garage: 'none' | 'one' | 'two' | 'three' | 'four_plus'
+  bedrooms: CustomermPropertyProfileBedrooms
+  garage: CustomermPropertyProfileGarage
 }
 
-type ApiCustomerPurchaseHistory = {
-  development: ApiItemLinks
-  unit: string
-  floorPlan: string
-  amount: number
-}
+// type ApiCustomerSpouse = {
+//   name: string
+//   phone: string
+//   email: string
+//   rg: string
+//   cpf: string
+//   profession: string
+//   marriageDate: string
+// }
+
+// type ApiCustomerCompany = {
+//   name: string
+//   phone: string
+//   email: string
+//   cnpj: string
+//   address: ApiCustomerAddress
+// }

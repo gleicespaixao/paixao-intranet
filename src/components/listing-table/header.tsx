@@ -11,14 +11,17 @@ import {
   Portal,
   Select,
   Separator,
-  Stack
+  Stack,
+  IconButton
 } from '@chakra-ui/react'
 import NextLink from 'next/link'
 import React from 'react'
 import { BiPlus } from 'react-icons/bi'
 import { TopSelectConfig, Option } from '.'
+import { sentenceCase } from '@/utils/sentence-case'
 
 export type ListingTableHeaderProps = {
+  simple?: boolean
   entity: string
   topSelects?: TopSelectConfig[]
   searchValue?: string
@@ -32,6 +35,7 @@ export type ListingTableHeaderProps = {
 }
 
 export const ListingTableHeader = ({
+  simple,
   entity,
   topSelects = [],
   searchValue = '',
@@ -55,10 +59,21 @@ export const ListingTableHeader = ({
   }, [topSelects])
   return (
     <>
-      <Stack m={6}>
+      <Stack align={simple ? 'center' : 'start'} m={6} justify="space-between" direction={simple ? 'row' : 'column'}>
         <Heading size="md" fontWeight="medium">
-          Filtragem de {entity}
+          {!simple ? `Filtragem de ${entity}` : `${sentenceCase(entity)}`}
         </Heading>
+        {simple && (
+          <HStack>
+            <ListingTableHeaderInputSearch entity={entity} searchValue={searchValue} onSearchChange={onSearchChange} />
+            <ListingTableHeaderAddButton
+              simple={simple}
+              entity={entity}
+              includeHref={includeHref}
+              includeLabel={includeLabel}
+            />
+          </HStack>
+        )}
 
         {!!topSelects.length && (
           <HStack>
@@ -110,64 +125,106 @@ export const ListingTableHeader = ({
       <Separator />
 
       {/* SEGUNDA LINHA: page size + search + botão */}
-      <Stack m={6}>
-        <HStack justify="space-between">
-          <Select.Root
-            collection={sizeCollection}
-            defaultValue={[String(defaultPageSize)]}
-            onValueChange={(d) => onPageSizeChange(Number(d.value))}
-            w="20"
-            disabled={loading}
-          >
-            <Select.HiddenSelect />
-            <Select.Control>
-              <Select.Trigger>
-                <Select.ValueText />
-              </Select.Trigger>
-              <Select.IndicatorGroup>
-                <Select.Indicator />
-              </Select.IndicatorGroup>
-            </Select.Control>
-            <Portal>
-              <Select.Positioner>
-                <Select.Content>
-                  <For each={sizeCollection.items}>
-                    {(opt) => (
-                      <Select.Item key={opt.value} item={opt}>
-                        {opt.label}
-                        <Select.ItemIndicator />
-                      </Select.Item>
-                    )}
-                  </For>
-                </Select.Content>
-              </Select.Positioner>
-            </Portal>
-          </Select.Root>
+      {!simple && (
+        <>
+          <Stack m={6}>
+            <HStack justify="space-between">
+              <Select.Root
+                collection={sizeCollection}
+                defaultValue={[String(defaultPageSize)]}
+                onValueChange={(d) => onPageSizeChange(Number(d.value))}
+                w="20"
+              >
+                <Select.HiddenSelect />
+                <Select.Control>
+                  <Select.Trigger>
+                    <Select.ValueText />
+                  </Select.Trigger>
+                  <Select.IndicatorGroup>
+                    <Select.Indicator />
+                  </Select.IndicatorGroup>
+                </Select.Control>
+                <Portal>
+                  <Select.Positioner>
+                    <Select.Content>
+                      <For each={sizeCollection.items}>
+                        {(opt) => (
+                          <Select.Item key={opt.value} item={opt}>
+                            {opt.label}
+                            <Select.ItemIndicator />
+                          </Select.Item>
+                        )}
+                      </For>
+                    </Select.Content>
+                  </Select.Positioner>
+                </Portal>
+              </Select.Root>
 
-          <HStack>
-            <Input
-              placeholder={`Buscar ${entity}`}
-              value={searchValue}
-              onChange={(e) => onSearchChange?.(e.target.value)}
-              // não desabilite; deixe o usuário continuar digitando
-              aria-busy={loading}
-              onKeyDown={(e) => {
-                if (e.key === 'Enter') onSearchChange?.((e.target as HTMLInputElement).value)
-              }}
-            />
-            {includeHref && (
-              <NextLink href={includeHref}>
-                <Button>
-                  <BiPlus />
-                  {includeLabel ?? `Novo ${entity}`}
-                </Button>
-              </NextLink>
-            )}
-          </HStack>
-        </HStack>
-      </Stack>
-
-      <Separator />
+              <HStack>
+                <ListingTableHeaderInputSearch
+                  entity={entity}
+                  searchValue={searchValue}
+                  onSearchChange={onSearchChange}
+                />
+                <ListingTableHeaderAddButton entity={entity} includeHref={includeHref} includeLabel={includeLabel} />
+              </HStack>
+            </HStack>
+          </Stack>
+          <Separator />
+        </>
+      )}
     </>
+  )
+}
+
+const ListingTableHeaderInputSearch = ({
+  size,
+  entity,
+  searchValue,
+  onSearchChange
+}: {
+  size?: 'md' | 'sm' | 'lg' | 'xl' | '2xl' | '2xs'
+  entity?: string
+  searchValue?: string
+  onSearchChange?: (value: string) => void
+}) => {
+  return (
+    <Input
+      size={size}
+      placeholder={`Buscar ${entity}`}
+      value={searchValue}
+      onChange={(e) => onSearchChange?.(e.target.value)}
+      onKeyDown={(e) => {
+        if (e.key === 'Enter') onSearchChange?.((e.target as HTMLInputElement).value)
+      }}
+    />
+  )
+}
+
+const ListingTableHeaderAddButton = ({
+  simple,
+  entity,
+  includeHref,
+  includeLabel
+}: {
+  simple?: boolean
+  entity: string
+  includeHref?: string
+  includeLabel?: string
+}) => {
+  if (!includeHref) return null
+  return (
+    <NextLink href={includeHref}>
+      {!simple ? (
+        <Button>
+          <BiPlus />
+          {includeLabel ?? `Novo ${entity}`}
+        </Button>
+      ) : (
+        <IconButton>
+          <BiPlus />
+        </IconButton>
+      )}
+    </NextLink>
   )
 }

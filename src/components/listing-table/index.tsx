@@ -28,6 +28,7 @@ export type ColumnDef<TRow extends Record<string, unknown>> = {
 }
 
 export type ListingTableProps<TRow extends Record<string, unknown>> = {
+  simple?: boolean
   entity: string
   rows: TRow[]
   columns: ColumnDef<TRow>[]
@@ -49,6 +50,7 @@ export type ListingTableProps<TRow extends Record<string, unknown>> = {
 type StringKeyOf<T> = Extract<keyof T, string>
 
 export const ListingTable = <TRow extends Record<string, unknown>>({
+  simple,
   entity,
   rows,
   columns,
@@ -81,6 +83,7 @@ export const ListingTable = <TRow extends Record<string, unknown>>({
   return (
     <Stack gap={0}>
       <ListingTableHeader
+        simple={simple}
         entity={entity}
         topSelects={topSelects}
         searchValue={searchValue}

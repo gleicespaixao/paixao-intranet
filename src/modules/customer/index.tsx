@@ -4,12 +4,12 @@ import * as React from 'react'
 import { PageHeader } from '@/components/layout/page-header'
 import { Card, HStack, IconButton } from '@chakra-ui/react'
 import { ColumnDef, ListingTable } from '@/components/listing-table'
-import { getList } from '@/services/get-list'
 import { formatPhoneNumber } from '@/utils/format-phone-number'
 import { Tooltip } from '@/components/ui/tooltip'
 import { BiPen, BiShow } from 'react-icons/bi'
 import NextLink from 'next/link'
-import { ApiCustomer } from '@/@types/api-customer'
+import type { ApiCustomer } from '@/@types/api-customer'
+import { useCustomersList } from '@/services/customer'
 
 type Row = { id: string; name: string; phone: string; email: string }
 
@@ -23,17 +23,28 @@ export const ModuleCustomer = ({ title }: { title: string }) => {
   // busca
   const [search, setSearch] = React.useState('')
 
-  // debounce simples (300ms)
-  const [debouncedSearch, setDebouncedSearch] = React.useState(search)
-  React.useEffect(() => {
-    const t = setTimeout(() => setDebouncedSearch(search.trim()), 300)
-    return () => clearTimeout(t)
-  }, [search])
+  const {
+    rows: apiRows,
+    totalCount,
+    loading
+  } = useCustomersList({
+    page,
+    pageSize,
+    search,
+    searchFields: ['name', 'email', 'phone'] // ajuste se quiser
+  })
 
-  // dados
-  const [rows, setRows] = React.useState<Row[]>([])
-  const [totalCount, setTotalCount] = React.useState(0)
-  const [loading, setLoading] = React.useState(false)
+  // mapeia para o shape da tabela (deixa o estado fora; só deriva)
+  const rows: Row[] = React.useMemo(
+    () =>
+      apiRows.map((r: ApiCustomer) => ({
+        id: r.id,
+        name: r.name ?? '',
+        phone: r.phone ?? '',
+        email: r.email ?? ''
+      })),
+    [apiRows]
+  )
 
   const columns = React.useMemo<ColumnDef<Row>[]>(
     () => [
@@ -53,7 +64,6 @@ export const ModuleCustomer = ({ title }: { title: string }) => {
                 </IconButton>
               </NextLink>
             </Tooltip>
-
             <Tooltip content="Editar" openDelay={300}>
               <NextLink href={`customer/edit/${r.id}`}>
                 <IconButton aria-label="Editar" size="sm" variant="subtle">
@@ -68,41 +78,10 @@ export const ModuleCustomer = ({ title }: { title: string }) => {
     []
   )
 
-  React.useEffect(() => {
-    const ac = new AbortController()
-    setLoading(true)
-    ;(async () => {
-      const filter = debouncedSearch.length > 0 ? `name|email|phone lk ${debouncedSearch}` : undefined
-
-      const res = await getList<ApiCustomer>('/customer', { page, pageSize, filter }, { signal: ac.signal })
-
-      if (ac.signal.aborted) return
-
-      if (res.success && res.data) {
-        const api = res.data
-        setTotalCount(api.totalRecords ?? api.records.length)
-        const mapped: Row[] = api.records.map((r) => ({
-          id: r.id,
-          name: r.name ?? '',
-          phone: r.phone ?? '',
-          email: r.email ?? ''
-        }))
-        setRows(mapped)
-      } else {
-        setRows([])
-        setTotalCount(0)
-      }
-
-      setLoading(false)
-    })()
-
-    return () => ac.abort()
-  }, [page, pageSize, debouncedSearch])
-
-  // quando o texto “bruto” muda, reseta página imediatamente
+  // resetar para página 1 quando o termo de busca mudar
   React.useEffect(() => {
     setPage(1)
-  }, [debouncedSearch])
+  }, [search])
 
   return (
     <>
