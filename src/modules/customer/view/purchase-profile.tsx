@@ -1,5 +1,5 @@
 import { ApiCustomer } from '@/@types/api-customer'
-import { Badge, Card, Heading, HStack, Skeleton, Stack, StackSeparator, Text } from '@chakra-ui/react'
+import { Badge, Card, Heading, HStack, Stack, StackSeparator, Text } from '@chakra-ui/react'
 import { BiBuildingHouse, BiCar, BiHome, BiHotel, BiTargetLock } from 'react-icons/bi'
 
 // helpers
@@ -20,7 +20,7 @@ const getLinkLabel = (x: unknown) => {
   return 'Sem preferência'
 }
 
-export const CustomerViewPurchaseProfile = ({ customer, loading }: { customer?: ApiCustomer; loading: boolean }) => {
+export const CustomerViewPurchaseProfile = ({ customer }: { customer?: ApiCustomer }) => {
   const profile = customer?.propertyProfile
   const goal = tPurchaseGoal(profile?.purchaseGoals)
   const bedrooms = tBedrooms(profile?.bedrooms)
@@ -42,11 +42,9 @@ export const CustomerViewPurchaseProfile = ({ customer, loading }: { customer?: 
             <Text fontWeight="medium" minW="fit-content">
               Objetivo de compra:
             </Text>
-            <Skeleton loading={loading} display="inline-block" minW="90px">
-              <HStack separator={<StackSeparator />}>
-                <Text>{goal}</Text>
-              </HStack>
-            </Skeleton>
+            <HStack separator={<StackSeparator />}>
+              <Text>{goal}</Text>
+            </HStack>
           </HStack>
 
           {/* Tipo de imóvel */}
@@ -55,17 +53,15 @@ export const CustomerViewPurchaseProfile = ({ customer, loading }: { customer?: 
             <Text fontWeight="medium" minW="fit-content">
               Tipo:
             </Text>
-            <Skeleton loading={loading} display="inline-block" minW="160px">
-              {types.length ? (
-                <HStack separator={<StackSeparator />} wrap="wrap">
-                  {types.map((t, i) => (
-                    <Text key={i}>{getLinkLabel(t)}</Text>
-                  ))}
-                </HStack>
-              ) : (
-                <Text>—</Text>
-              )}
-            </Skeleton>
+            {types.length ? (
+              <HStack separator={<StackSeparator />} wrap="wrap">
+                {types.map((t, i) => (
+                  <Text key={i}>{getLinkLabel(t)}</Text>
+                ))}
+              </HStack>
+            ) : (
+              <Text>—</Text>
+            )}
           </HStack>
 
           {/* Dormitórios */}
@@ -74,11 +70,9 @@ export const CustomerViewPurchaseProfile = ({ customer, loading }: { customer?: 
             <Text fontWeight="medium" minW="fit-content">
               Dormitórios:
             </Text>
-            <Skeleton loading={loading} display="inline-block" minW="60px">
-              <HStack separator={<StackSeparator />}>
-                <Text>{bedrooms}</Text>
-              </HStack>
-            </Skeleton>
+            <HStack separator={<StackSeparator />}>
+              <Text>{bedrooms}</Text>
+            </HStack>
           </HStack>
 
           {/* Garagem */}
@@ -87,11 +81,9 @@ export const CustomerViewPurchaseProfile = ({ customer, loading }: { customer?: 
             <Text fontWeight="medium" minW="fit-content">
               Garagem:
             </Text>
-            <Skeleton loading={loading} display="inline-block" minW="60px">
-              <HStack separator={<StackSeparator />}>
-                <Text>{garage}</Text>
-              </HStack>
-            </Skeleton>
+            <HStack separator={<StackSeparator />}>
+              <Text>{garage}</Text>
+            </HStack>
           </HStack>
 
           {/* Bairros */}
@@ -100,17 +92,15 @@ export const CustomerViewPurchaseProfile = ({ customer, loading }: { customer?: 
             <Text fontWeight="medium" minW="fit-content">
               Bairros de interesse:
             </Text>
-            <Skeleton loading={loading} display="inline-block" minW="220px">
-              {neighborhoods.length ? (
-                <HStack gap={2} wrap="wrap">
-                  {neighborhoods.map((n, i) => (
-                    <Badge key={i}>{getLinkLabel(n)}</Badge>
-                  ))}
-                </HStack>
-              ) : (
-                <Text>—</Text>
-              )}
-            </Skeleton>
+            {neighborhoods.length ? (
+              <HStack gap={2} wrap="wrap">
+                {neighborhoods.map((n, i) => (
+                  <Badge key={i}>{getLinkLabel(n)}</Badge>
+                ))}
+              </HStack>
+            ) : (
+              <Text>—</Text>
+            )}
           </HStack>
         </Stack>
       </Card.Body>

@@ -6,6 +6,7 @@ import { useRouter } from 'next/router'
 import * as React from 'react'
 import type { ApiCustomer } from '@/@types/api-customer'
 import { getCustomerById } from '@/services/customer'
+import { LoadingOverlay } from '@/components/loading-overlay'
 
 export const getServerSideProps = withAuthGSSP()
 const title = 'Clientes'
@@ -14,7 +15,7 @@ const ProfilePage: NextPageWithLayout = () => {
   const router = useRouter()
   const { id } = router.query
 
-  const [customer, setCustomer] = React.useState<ApiCustomer | null>(null)
+  const [customer, setCustomer] = React.useState<ApiCustomer>()
   const [loading, setLoading] = React.useState(true)
   const [error, setError] = React.useState<string | null>(null)
 
@@ -39,12 +40,14 @@ const ProfilePage: NextPageWithLayout = () => {
     return () => ac.abort()
   }, [id])
 
-  if (error) {
+  if (loading) return <LoadingOverlay loading />
+
+  if (error || !customer) {
     console.error(error)
     return null
   }
 
-  return <ModuleCustomerView customer={customer ?? undefined} loading={loading} />
+  return <ModuleCustomerView customer={customer} />
 }
 
 ProfilePage.getLayout = (page) => <AppLayout title={title}>{page}</AppLayout>

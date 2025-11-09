@@ -10,24 +10,19 @@ import { CustomerViewPurchaseProfile } from './purchase-profile'
 import { CustomerViewAddress } from './address'
 import { CustomerViewPurchaseHistory } from './purchase-history'
 
-export const ModuleCustomerView = ({ customer, loading }: { customer?: ApiCustomer; loading: boolean }) => {
+export const ModuleCustomerView = ({ customer }: { customer: ApiCustomer }) => {
   return (
     <>
       <PageHeader
-        loading={loading}
         title={`ID do cliente: ${customer?.token}`}
         subtitle={formatDateLong(customer?.logs.inclusion?.date)}
         backButton
         backButtonLink="/customer"
-        rightSlot={
-          <Button disabled={loading} colorPalette="red">
-            Excluir cliente
-          </Button>
-        }
+        rightSlot={<Button colorPalette="red">Excluir cliente</Button>}
       />
       <Stack gap={4}>
         <Stack w="full" gap={4} align="top" direction={{ base: 'column', xl: 'row' }}>
-          <CustomerViewInfo customer={customer} loading={loading} />
+          <CustomerViewInfo customer={customer} />
           <Stack w="full">
             <Tabs.Root defaultValue="info" variant="subtle">
               <Tabs.List>
@@ -42,9 +37,9 @@ export const ModuleCustomerView = ({ customer, loading }: { customer?: ApiCustom
               </Tabs.List>
               <Tabs.Content value="info">
                 <Stack gap={4}>
-                  <CustomerViewPurchaseProfile customer={customer} loading={loading} />
-                  <CustomerViewAddress customer={customer} loading={loading} />
-                  <CustomerViewPurchaseHistory customer={customer} loading={loading} />
+                  <CustomerViewPurchaseProfile customer={customer} />
+                  <CustomerViewAddress customer={customer} />
+                  <CustomerViewPurchaseHistory customer={customer} />
                   {/* <Card.Root>
                     <Card.Body p={0}>
                       <ListingTable

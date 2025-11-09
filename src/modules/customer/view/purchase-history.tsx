@@ -14,7 +14,7 @@ type Row = {
   percentage: number | null
 }
 
-export const CustomerViewPurchaseHistory = ({ customer }: { customer?: ApiCustomer; loading: boolean }) => {
+export const CustomerViewPurchaseHistory = ({ customer }: { customer?: ApiCustomer }) => {
   // paginação controlada
   const [page, setPage] = React.useState(1)
   const [pageSize, setPageSize] = React.useState(10)
@@ -68,7 +68,7 @@ export const CustomerViewPurchaseHistory = ({ customer }: { customer?: ApiCustom
           )
       },
       {
-        header: 'Valor',
+        header: 'Valor de compra',
         cell: (r) => (
           <LocaleProvider locale="pt-BR">
             <FormatNumber value={r.amount} style="currency" currency="BRL" />
