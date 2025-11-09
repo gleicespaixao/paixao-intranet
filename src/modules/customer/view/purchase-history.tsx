@@ -5,7 +5,14 @@ import { usePurchaseHistoryList } from '@/services/purchase-history'
 import { Card, FormatNumber, LocaleProvider } from '@chakra-ui/react'
 import React from 'react'
 
-type Row = { id: string; development: string; unit: string; floorPlan: string; amount: number }
+type Row = {
+  id: string
+  development: string
+  unit: string
+  floorPlan: string
+  amount: number
+  percentage: number | null
+}
 
 export const CustomerViewPurchaseHistory = ({ customer }: { customer?: ApiCustomer; loading: boolean }) => {
   // paginação controlada
@@ -24,20 +31,23 @@ export const CustomerViewPurchaseHistory = ({ customer }: { customer?: ApiCustom
     pageSize,
     search,
     searchFields: ['development.name', 'unit', 'floorPlan', 'amount'],
-    fixedFilters: [`ownerCustomer.id eq ${customer?.id}`]
+    fixedFilters: customer?.id ? [`ownerCustomer.id eq ${customer.id}`] : []
   })
 
-  // mapeia para o shape da tabela (deixa o estado fora; só deriva)
   const rows: Row[] = React.useMemo(
     () =>
-      apiRows.map((r: ApiPurchaseHistory) => ({
-        id: r.id,
-        development: r.development.name ?? '',
-        unit: r.unit ?? '',
-        floorPlan: r.floorPlan ?? '',
-        amount: r.amount
-      })),
-    [apiRows]
+      apiRows.map((r: ApiPurchaseHistory) => {
+        const share = r.ownerCustomer?.find((o) => o.id === customer?.id)
+        return {
+          id: r.id,
+          development: r.development.name ?? '',
+          unit: r.unit ?? '',
+          floorPlan: r.floorPlan ?? '',
+          amount: r.amount,
+          percentage: share?.percentage ?? null
+        }
+      }),
+    [apiRows, customer?.id]
   )
 
   const columns = React.useMemo<ColumnDef<Row>[]>(
@@ -45,6 +55,18 @@ export const CustomerViewPurchaseHistory = ({ customer }: { customer?: ApiCustom
       { header: 'Projeto', accessorKey: 'development' },
       { header: 'Unidade', accessorKey: 'unit' },
       { header: 'Planta', accessorKey: 'floorPlan' },
+      {
+        header: 'Porcentagem',
+        accessorKey: 'percentage',
+        cell: (r) =>
+          r.percentage == null ? (
+            '—'
+          ) : (
+            <LocaleProvider locale="pt-BR">
+              <FormatNumber value={r.percentage / 100} style="percent" maximumFractionDigits={2} />
+            </LocaleProvider>
+          )
+      },
       {
         header: 'Valor',
         cell: (r) => (
@@ -57,7 +79,6 @@ export const CustomerViewPurchaseHistory = ({ customer }: { customer?: ApiCustom
     []
   )
 
-  // resetar para página 1 quando o termo de busca mudar
   React.useEffect(() => {
     setPage(1)
   }, [search])

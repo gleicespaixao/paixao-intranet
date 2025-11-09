@@ -1,5 +1,6 @@
 export type ApiItemLinks = {
   id: string
+  token: number
   name: string
 }
 
