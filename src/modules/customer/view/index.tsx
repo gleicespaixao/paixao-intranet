@@ -11,8 +11,13 @@ import { CustomerViewAddress } from './address'
 import { CustomerViewPurchaseHistory } from './purchase-history'
 import { CustomerViewRelationship } from './relationship'
 import { CustomerViewCompany } from './company'
+import { ControlledDeleteButton } from '@/components/dialog/controled/controlled-delete'
+import { api } from '@/lib/api'
+import { toaster } from '@/components/ui/toaster'
+import { useRouter } from 'next/router'
 
 export const ModuleCustomerView = ({ customer }: { customer: ApiCustomer }) => {
+  const router = useRouter()
   return (
     <>
       <PageHeader
@@ -20,7 +25,27 @@ export const ModuleCustomerView = ({ customer }: { customer: ApiCustomer }) => {
         subtitle={formatDateLong(customer?.logs.inclusion?.date)}
         backButton
         backButtonLink="/customer"
-        rightSlot={<Button colorPalette="red">Excluir cliente</Button>}
+        rightSlot={
+          <ControlledDeleteButton
+            data={customer}
+            entity="cliente"
+            itemName={customer.name}
+            onDelete={async ({ id }) => api.delete(`/Customer/${id}`)}
+            renderTrigger={(open, loading) => (
+              <Button onClick={open} colorPalette="red" loading={loading}>
+                Excluir cliente
+              </Button>
+            )}
+            onError={() =>
+              toaster.create({
+                title: 'Ocorreu um erro ao excluir o cliente',
+                type: 'error'
+              })
+            }
+            redirectTo="/customer"
+            navigate={(to) => router.push(to)}
+          />
+        }
       />
       <Stack gap={4}>
         <Stack w="full" gap={4} align="top" direction={{ base: 'column', xl: 'row' }}>
