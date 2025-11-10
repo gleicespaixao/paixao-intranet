@@ -1,4 +1,4 @@
-import { ApiLog } from './utils'
+import { ApiAddress, ApiLog } from './utils'
 
 import { ApiItemLinks } from './utils'
 export type APICustomerStatus = 'active' | 'inactive' | 'paused'
@@ -19,21 +19,10 @@ export type ApiCustomer = {
   dateBirth: string
   profession: string
   maritalStatus: APICustomerMaritalStatus
-  address: ApiCustomerAddress
+  address: ApiAddress
   propertyProfile: ApiCustomerPropertyProfile
   logs: ApiLog
 }
-
-type ApiCustomerAddress = {
-  postalCode: number
-  street: string
-  addressLine: string
-  streetNumber: string
-  neighborhood: string
-  city: string
-  state: string
-}
-
 type ApiCustomerPropertyProfile = {
   purchaseGoals: APICustomerPropertyProfilePurchaseGoals
   typeOfProperty: ApiItemLinks[]
@@ -41,11 +30,3 @@ type ApiCustomerPropertyProfile = {
   bedrooms: APICustomerPropertyProfileBedrooms
   garage: APICustomerPropertyProfileGarage
 }
-
-// type ApiCustomerCompany = {
-//   name: string
-//   phone: string
-//   email: string
-//   cnpj: string
-//   address: ApiCustomerAddress
-// }

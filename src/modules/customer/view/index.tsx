@@ -10,6 +10,7 @@ import { CustomerViewPurchaseProfile } from './purchase-profile'
 import { CustomerViewAddress } from './address'
 import { CustomerViewPurchaseHistory } from './purchase-history'
 import { CustomerViewRelationship } from './relationship'
+import { CustomerViewCompany } from './company'
 
 export const ModuleCustomerView = ({ customer }: { customer: ApiCustomer }) => {
   return (
@@ -41,47 +42,8 @@ export const ModuleCustomerView = ({ customer }: { customer: ApiCustomer }) => {
                   <CustomerViewPurchaseProfile customer={customer} />
                   <CustomerViewAddress customer={customer} />
                   <CustomerViewPurchaseHistory customer={customer} />
+                  <CustomerViewCompany customer={customer} />
                   <CustomerViewRelationship customer={customer} />
-                  {/* <Card.Root>
-                    <Card.Body p={0}>
-                      <ListingTable
-                        simple={true}
-                        entity="empresas"
-                        rows={[]}
-                        columns={[]}
-                        page={0}
-                        pageSize={0}
-                        totalCount={0}
-                        onPageChange={function (page: number): void {
-                          throw new Error('Function not implemented.')
-                        }}
-                        onPageSizeChange={function (size: number): void {
-                          throw new Error('Function not implemented.')
-                        }}
-                        includeHref="sd"
-                      />
-                    </Card.Body>
-                  </Card.Root> */}
-                  {/* <Card.Root>
-                    <Card.Body p={0}>
-                      <ListingTable
-                        simple={true}
-                        entity="relacionamentos"
-                        rows={[]}
-                        columns={[]}
-                        page={0}
-                        pageSize={0}
-                        totalCount={0}
-                        onPageChange={function (page: number): void {
-                          throw new Error('Function not implemented.')
-                        }}
-                        onPageSizeChange={function (size: number): void {
-                          throw new Error('Function not implemented.')
-                        }}
-                        includeHref="sd"
-                      />
-                    </Card.Body>
-                  </Card.Root> */}
                 </Stack>
               </Tabs.Content>
               <Tabs.Content value="docs">Manage your projects</Tabs.Content>

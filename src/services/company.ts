@@ -6,9 +6,9 @@ import { useDebouncedValue } from '@/services/_search' // seu debounce
 import * as React from 'react'
 import { AxiosRequestConfig } from 'axios'
 import { getJson } from './_request'
-import { ApiPurchaseHistory } from '@/@types/api-purchase-history'
+import { ApiCompany } from '@/@types/api-company'
 
-export type PurchaseHistoryListParams = {
+export type CompanyListParams = {
   page: number
   pageSize: number
   search?: string
@@ -18,11 +18,11 @@ export type PurchaseHistoryListParams = {
   signal?: AbortSignal
 }
 
-export async function getPurchaseHistoryById(id: string, config?: AxiosRequestConfig) {
-  return getJson<ApiPurchaseHistory>(`/PurchaseHistory/${id}`, config)
+export async function getCompanyById(id: string, config?: AxiosRequestConfig) {
+  return getJson<ApiCompany>(`/Company/${id}`, config)
 }
 
-export async function fetchPurchaseHistory({
+export async function fetchCompany({
   page,
   pageSize,
   search,
@@ -30,19 +30,19 @@ export async function fetchPurchaseHistory({
   fixedFilters = [],
   fixedConds = [],
   signal
-}: PurchaseHistoryListParams) {
+}: CompanyListParams) {
   const searchFilter = like(searchFields as string[], search)
   const typedFixed = fixedConds.map((f) => cond(f.field, f.op, f.value))
   const filter = joinFilters([...fixedFilters, ...typedFixed, searchFilter])
 
-  return getList<ApiPurchaseHistory>('/PurchaseHistory', { page, pageSize, filter }, { signal })
+  return getList<ApiCompany>('/Company', { page, pageSize, filter }, { signal })
 }
 
-export function usePurchaseHistoryList(params: Omit<PurchaseHistoryListParams, 'signal'>) {
+export function useCompanyList(params: Omit<CompanyListParams, 'signal'>) {
   const { page, pageSize, search = '', searchFields, fixedFilters, fixedConds } = params
   const debounced = useDebouncedValue(search, 300)
 
-  const [rows, setRows] = React.useState<ApiPurchaseHistory[]>([])
+  const [rows, setRows] = React.useState<ApiCompany[]>([])
   const [totalCount, setTotalCount] = React.useState(0)
   const [loading, setLoading] = React.useState(false)
 
@@ -50,7 +50,7 @@ export function usePurchaseHistoryList(params: Omit<PurchaseHistoryListParams, '
     const ac = new AbortController()
     setLoading(true)
     ;(async () => {
-      const res = await fetchPurchaseHistory({
+      const res = await fetchCompany({
         page,
         pageSize,
         search: debounced,
