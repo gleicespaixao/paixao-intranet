@@ -1,15 +1,15 @@
 import { ApiLog } from './utils'
 
 import { ApiItemLinks } from './utils'
-export type CustomerStatus = 'active' | 'inactive' | 'paused'
-export type CustomermMaritalStatus = 'single' | 'married' | 'separated' | 'widowed' | 'other'
-export type CustomermPropertyProfilePurchaseGoals = 'none' | 'residence' | 'investment'
-export type CustomermPropertyProfileBedrooms = 'none' | 'one' | 'two' | 'three' | 'four_plus'
-export type CustomermPropertyProfileGarage = 'none' | 'one' | 'two' | 'three' | 'four_plus'
+export type APICustomerStatus = 'active' | 'inactive' | 'paused'
+export type APICustomerMaritalStatus = 'single' | 'married' | 'separated' | 'widowed' | 'other'
+export type APICustomerPropertyProfilePurchaseGoals = 'none' | 'residence' | 'investment'
+export type APICustomerPropertyProfileBedrooms = 'none' | 'one' | 'two' | 'three' | 'four_plus'
+export type APICustomerPropertyProfileGarage = 'none' | 'one' | 'two' | 'three' | 'four_plus'
 
 export type ApiCustomer = {
   id: string
-  status: CustomerStatus
+  status: APICustomerStatus
   token: number
   name: string
   phone: string
@@ -18,7 +18,7 @@ export type ApiCustomer = {
   cpf: string
   dateBirth: string
   profession: string
-  maritalStatus: CustomermMaritalStatus
+  maritalStatus: APICustomerMaritalStatus
   address: ApiCustomerAddress
   propertyProfile: ApiCustomerPropertyProfile
   logs: ApiLog
@@ -35,22 +35,12 @@ type ApiCustomerAddress = {
 }
 
 type ApiCustomerPropertyProfile = {
-  purchaseGoals: CustomermPropertyProfilePurchaseGoals
+  purchaseGoals: APICustomerPropertyProfilePurchaseGoals
   typeOfProperty: ApiItemLinks[]
   neighborhood: ApiItemLinks[]
-  bedrooms: CustomermPropertyProfileBedrooms
-  garage: CustomermPropertyProfileGarage
+  bedrooms: APICustomerPropertyProfileBedrooms
+  garage: APICustomerPropertyProfileGarage
 }
-
-// type ApiCustomerSpouse = {
-//   name: string
-//   phone: string
-//   email: string
-//   rg: string
-//   cpf: string
-//   profession: string
-//   marriageDate: string
-// }
 
 // type ApiCustomerCompany = {
 //   name: string

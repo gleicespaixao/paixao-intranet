@@ -14,7 +14,7 @@ type Row = {
   percentage: number | null
 }
 
-export const CustomerViewPurchaseHistory = ({ customer }: { customer?: ApiCustomer }) => {
+export const CustomerViewPurchaseHistory = ({ customer }: { customer: ApiCustomer }) => {
   // paginação controlada
   const [page, setPage] = React.useState(1)
   const [pageSize, setPageSize] = React.useState(10)
@@ -31,7 +31,7 @@ export const CustomerViewPurchaseHistory = ({ customer }: { customer?: ApiCustom
     pageSize,
     search,
     searchFields: ['development.name', 'unit', 'floorPlan', 'amount'],
-    fixedFilters: customer?.id ? [`ownerCustomer.id eq ${customer.id}`] : []
+    fixedFilters: [`ownerCustomer.id eq ${customer.id}`]
   })
 
   const rows: Row[] = React.useMemo(
@@ -47,7 +47,7 @@ export const CustomerViewPurchaseHistory = ({ customer }: { customer?: ApiCustom
           percentage: share?.percentage ?? null
         }
       }),
-    [apiRows, customer?.id]
+    [apiRows, customer.id]
   )
 
   const columns = React.useMemo<ColumnDef<Row>[]>(
@@ -105,7 +105,6 @@ export const CustomerViewPurchaseHistory = ({ customer }: { customer?: ApiCustom
           pageSizeOptions={[10, 25, 50, 100]}
           defaultPageSize={pageSize}
           loading={loading}
-          // includeHref="sd"
         />
       </Card.Body>
     </Card.Root>

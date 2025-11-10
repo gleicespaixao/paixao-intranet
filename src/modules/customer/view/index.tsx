@@ -9,6 +9,7 @@ import { formatDateLong } from '@/utils/date-converter'
 import { CustomerViewPurchaseProfile } from './purchase-profile'
 import { CustomerViewAddress } from './address'
 import { CustomerViewPurchaseHistory } from './purchase-history'
+import { CustomerViewRelationship } from './relationship'
 
 export const ModuleCustomerView = ({ customer }: { customer: ApiCustomer }) => {
   return (
@@ -40,6 +41,7 @@ export const ModuleCustomerView = ({ customer }: { customer: ApiCustomer }) => {
                   <CustomerViewPurchaseProfile customer={customer} />
                   <CustomerViewAddress customer={customer} />
                   <CustomerViewPurchaseHistory customer={customer} />
+                  <CustomerViewRelationship customer={customer} />
                   {/* <Card.Root>
                     <Card.Body p={0}>
                       <ListingTable
