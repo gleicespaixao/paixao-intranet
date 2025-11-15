@@ -1,5 +1,5 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import type { ApiCustomer, ApiCustomerCreate } from '@/@types/api-customer'
+import type { ApiCustomer, ApiCustomerCreateUpdate } from '@/@types/api-customer'
 import { getList } from '@/services/get-list'
 import { joinFilters, like, cond } from '@/services/_filters'
 import { useDebouncedValue } from '@/services/_search' // seu debounce
@@ -9,8 +9,8 @@ import { addJson, deleteJson, getJson, updateJson } from './_request'
 import { CustomerForm } from '@/schemas/customer'
 
 export type CustomersListParams = {
-  page: number
-  pageSize: number
+  page?: number
+  pageSize?: number
   search?: string
   searchFields?: string[]
   fixedFilters?: string[]
@@ -33,7 +33,7 @@ const hasAnyAddressField = (address: CustomerForm['address']) => {
   )
 }
 
-const toApiCustomerPayload = (form: CustomerForm): ApiCustomerCreate => {
+const toApiCustomerPayload = (form: CustomerForm): ApiCustomerCreateUpdate => {
   const hasAddress = hasAnyAddressField(form.address)
 
   return {
@@ -82,7 +82,6 @@ export async function getCustomerById(id: string, config?: AxiosRequestConfig) {
 
 export async function addCustomer(form: CustomerForm) {
   const payload = toApiCustomerPayload(form)
-  console.log('payload', payload)
   return addJson<ApiCustomer>('/Customer', payload)
 }
 
@@ -96,8 +95,8 @@ export async function deleteCustomer(id: string) {
 }
 
 export async function fetchCustomers({
-  page,
-  pageSize,
+  page = 1,
+  pageSize = 100,
   search,
   searchFields = ['name', 'email', 'phone'],
   fixedFilters = [],

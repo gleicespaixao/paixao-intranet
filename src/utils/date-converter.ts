@@ -9,8 +9,9 @@ export function dateConverter(date: string, type: 'international' | 'brazil') {
 }
 
 export function formatNotificationDate(input: string | number | Date) {
-  const hasTime = typeof input === 'string' && /T\d{2}:\d{2}/.test(input)
-  const date = typeof input === 'string' && !hasTime ? new Date(`${input}T00:00:00`) : new Date(input)
+  const date = toDate(input)
+
+  if (!date) return ''
 
   const datePart = new Intl.DateTimeFormat('pt-BR', {
     weekday: 'long',
@@ -23,7 +24,6 @@ export function formatNotificationDate(input: string | number | Date) {
     minute: '2-digit'
   }).format(date)
 
-  // Capitaliza "quarta-feira" -> "Quarta-feira"
   const cap = (s: string) => s.charAt(0).toUpperCase() + s.slice(1)
 
   return `${cap(datePart)} às ${timePart}`
@@ -32,12 +32,47 @@ export function formatNotificationDate(input: string | number | Date) {
 const TZ = 'America/Sao_Paulo' as const
 const LOCALE = 'pt-BR' as const
 
-type DateInput = string | number | Date | null | undefined
+export type DateInput = string | number | Date | null | undefined
 
 function toDate(input: DateInput): Date | null {
   if (input == null) return null
-  const d = input instanceof Date ? input : new Date(input)
-  return Number.isNaN(d.getTime()) ? null : d
+
+  // já é Date
+  if (input instanceof Date) {
+    return Number.isNaN(input.getTime()) ? null : input
+  }
+
+  // string
+  if (typeof input === 'string') {
+    const trimmed = input.trim()
+
+    // "YYYY-MM-DD" → tratar como data local
+    if (/^\d{4}-\d{2}-\d{2}$/.test(trimmed)) {
+      const [y, m, d] = trimmed.split('-').map(Number)
+      const date = new Date(y, m - 1, d)
+      return Number.isNaN(date.getTime()) ? null : date
+    }
+
+    // "DD/MM/YYYY" → também como data local (se você usar esse formato)
+    if (/^\d{2}\/\d{2}\/\d{4}$/.test(trimmed)) {
+      const [day, month, year] = trimmed.split('/').map(Number)
+      const date = new Date(year, month - 1, day)
+      return Number.isNaN(date.getTime()) ? null : date
+    }
+
+    // outras strings (ISO completo etc.)
+    const parsed = new Date(trimmed)
+    return Number.isNaN(parsed.getTime()) ? null : parsed
+  }
+
+  // number (timestamp)
+  if (typeof input === 'number') {
+    const date = new Date(input)
+    return Number.isNaN(date.getTime()) ? null : date
+  }
+
+  // fallback de segurança (não deve chegar aqui com o tipo atual)
+  return null
 }
 
 const fmtShort = new Intl.DateTimeFormat(LOCALE, {

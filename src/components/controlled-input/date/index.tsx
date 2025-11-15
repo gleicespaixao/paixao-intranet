@@ -1,12 +1,11 @@
 import 'react-multi-date-picker/styles/backgrounds/bg-dark.css'
 import 'react-multi-date-picker/styles/colors/teal.css'
 
-import { FieldErrorText, FieldLabel, Input as ChakraInput } from '@chakra-ui/react'
+import { Input as ChakraInput, Field } from '@chakra-ui/react'
 import { Control, Controller, FieldValues, Path } from 'react-hook-form'
 import DatePicker, { DateObject } from 'react-multi-date-picker'
 
 import { useColorMode } from '@/components/ui/color-mode'
-import { Field } from '@/components/ui/field'
 import { InputGroup } from '@/components/ui/input-group'
 
 import { ClearInput } from './clear-input'
@@ -16,6 +15,7 @@ type DateInputProps<TFieldValues extends FieldValues> = {
   name: Path<TFieldValues>
   control: Control<TFieldValues>
   error?: string
+  required?: boolean
   placeholder?: string
   disabled?: boolean
   maxDate?: DateObject
@@ -31,6 +31,7 @@ export function ControlledInputDate<T extends FieldValues>({
   name,
   control,
   error,
+  required,
   placeholder = 'DD/MM/AAAA',
   disabled,
   borderColor,
@@ -49,8 +50,13 @@ export function ControlledInputDate<T extends FieldValues>({
       control={control}
       render={({ field: { value: inputCalendarValue, onChange } }) => {
         return (
-          <Field invalid={!!error}>
-            {label && <FieldLabel>{label}</FieldLabel>}
+          <Field.Root required={required} invalid={!!error}>
+            {label && (
+              <Field.Label>
+                {label}
+                <Field.RequiredIndicator />
+              </Field.Label>
+            )}
             <DatePicker
               zIndex={9999}
               value={inputCalendarValue ? new DateObject(inputCalendarValue) : null}
@@ -97,6 +103,7 @@ export function ControlledInputDate<T extends FieldValues>({
                     w="full"
                   >
                     <ChakraInput
+                      required={required}
                       borderColor={borderColor}
                       placeholder={placeholder}
                       w="full"
@@ -122,8 +129,8 @@ export function ControlledInputDate<T extends FieldValues>({
                   : undefined
               }
             />
-            {error && <FieldErrorText>{error}</FieldErrorText>}
-          </Field>
+            {error && <Field.ErrorText>{error}</Field.ErrorText>}
+          </Field.Root>
         )
       }}
     />

@@ -33,7 +33,7 @@ type ApiCustomerPropertyProfile = {
   garage: APICustomerPropertyProfileGarage[]
 }
 
-export type ApiCustomerCreate = {
+export type ApiCustomerCreateUpdate = {
   status: APICustomerStatus
   name: string
   phone?: string | null

@@ -1,11 +1,9 @@
-import { FieldErrorText, FieldLabel, Stack } from '@chakra-ui/react'
+import { Field, Stack } from '@chakra-ui/react'
 import { Select, SizeProp } from 'chakra-react-select'
 import { useEffect, useState } from 'react'
 import { Control, Controller, FieldValues, Path } from 'react-hook-form'
 import type { ComponentType } from 'react'
 import type { GroupBase, OptionProps, OptionsOrGroups, SelectComponentsConfig } from 'react-select'
-
-import { Field } from '@/components/ui/field'
 
 /** Opção base: você pode estender com mais campos via genérico */
 export type BaseOption = {
@@ -19,6 +17,7 @@ type ControlledSelectAsyncProps<TFieldValues extends FieldValues, TOption extend
   name: Path<TFieldValues>
   control: Control<TFieldValues>
   disabled?: boolean
+  required?: boolean
   /** Sem any: loadOptions deve devolver TOption[] */
   loadOptions: (inputValue?: string, searchTxt?: string) => Promise<TOption[]>
   error?: string
@@ -47,6 +46,7 @@ export function ControlledSelectAsync<TFieldValues extends FieldValues, TOption 
   name,
   control,
   disabled,
+  required,
   error,
   loadOptions,
   selectFirstIfEmpty,
@@ -158,8 +158,13 @@ export function ControlledSelectAsync<TFieldValues extends FieldValues, TOption 
         }, [selectFirstIfEmpty, field.value, options])
 
         return (
-          <Field invalid={!!error} width={width}>
-            {label && <FieldLabel>{label}</FieldLabel>}
+          <Field.Root required={required} invalid={!!error} width={width}>
+            {label && (
+              <Field.Label>
+                {label}
+                <Field.RequiredIndicator />
+              </Field.Label>
+            )}
             <Stack width="full">
               <Select<TOption, boolean, GroupBase<TOption>>
                 onInputChange={setSearchTxt}
@@ -213,8 +218,8 @@ export function ControlledSelectAsync<TFieldValues extends FieldValues, TOption 
                 }}
               />
             </Stack>
-            {error && <FieldErrorText>{error}</FieldErrorText>}
-          </Field>
+            {error && <Field.ErrorText>{error}</Field.ErrorText>}
+          </Field.Root>
         )
       }}
     />
