@@ -30,7 +30,7 @@ import { fetchNeighborhood } from '@/services/neighborhood'
 import { Bedroom, BEDROOM_MAP, BEDROOM_OPTIONS } from '@/utils/bedroom'
 import { addCustomer, updateCustomer } from '@/services/customer'
 import { Garage, GARAGE_MAP, GARAGE_OPTIONS } from '@/utils/garage'
-import { useCustomerCepAutoFill } from '@/hooks/use-customer-cep-autofill'
+import { useCepAutoFill } from '@/hooks/use-cep-auto-fill'
 
 type Props = {
   open: boolean
@@ -121,7 +121,20 @@ export function CustomerDrawerForm({ open, onOpenChange, mode, initial, onSucces
       initial.address.state
     )
 
-  const { cepLoading, addressLocked } = useCustomerCepAutoFill({ watch, setValue, hasInitialAddress })
+  const { cepLoading, addressLocked } = useCepAutoFill<CustomerForm>({
+    watch,
+    setValue,
+    hasInitialAddress,
+    fields: {
+      postalCode: 'address.postalCode',
+      street: 'address.street',
+      neighborhood: 'address.neighborhood',
+      city: 'address.city',
+      state: 'address.state',
+      streetNumber: 'address.streetNumber',
+      addressLine: 'address.addressLine'
+    }
+  })
 
   React.useEffect(() => {
     reset(toDefaultValues(initial))
