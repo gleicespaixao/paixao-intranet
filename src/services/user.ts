@@ -27,7 +27,6 @@ export async function updateUserSimple(payload: UpdateUserSimplePayload): Promis
     if (!dateInternational) {
       return { success: false, error: 'Data de nascimento inválida' }
     }
-    console.log(dateInternational)
     // 3) Montar o payload final (sem mutar o original)
     const body = {
       ...payload,

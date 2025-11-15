@@ -12,11 +12,17 @@ import { CustomerViewPurchaseHistory } from './purchase-history'
 import { CustomerViewRelationship } from './relationship'
 import { CustomerViewCompany } from './company'
 import { ControlledDeleteButton } from '@/components/dialog/controled/controlled-delete'
-import { api } from '@/lib/api'
 import { toaster } from '@/components/ui/toaster'
 import { useRouter } from 'next/router'
+import { deleteCustomer } from '@/services/customer'
 
-export const ModuleCustomerView = ({ customer }: { customer: ApiCustomer }) => {
+export const ModuleCustomerView = ({
+  customer,
+  onCustomerChange
+}: {
+  customer: ApiCustomer
+  onCustomerChange?: (customer: ApiCustomer) => void
+}) => {
   const router = useRouter()
   return (
     <>
@@ -30,7 +36,7 @@ export const ModuleCustomerView = ({ customer }: { customer: ApiCustomer }) => {
             data={customer}
             entity="cliente"
             itemName={customer.name}
-            onDelete={async ({ id }) => api.delete(`/Customer/${id}`)}
+            onDelete={async ({ id }) => await deleteCustomer(id)}
             renderTrigger={(open, loading) => (
               <Button onClick={open} colorPalette="red" loading={loading}>
                 Excluir cliente
@@ -49,7 +55,7 @@ export const ModuleCustomerView = ({ customer }: { customer: ApiCustomer }) => {
       />
       <Stack gap={4}>
         <Stack w="full" gap={4} align="top" direction={{ base: 'column', xl: 'row' }}>
-          <CustomerViewInfo customer={customer} />
+          <CustomerViewInfo customer={customer} onCustomerChange={onCustomerChange} />
           <Stack w="full">
             <Tabs.Root defaultValue="info" variant="subtle">
               <Tabs.List>

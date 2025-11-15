@@ -1,11 +1,12 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import type { ApiCustomer } from '@/@types/api-customer'
+import type { ApiCustomer, ApiCustomerCreate } from '@/@types/api-customer'
 import { getList } from '@/services/get-list'
 import { joinFilters, like, cond } from '@/services/_filters'
 import { useDebouncedValue } from '@/services/_search' // seu debounce
 import * as React from 'react'
 import { AxiosRequestConfig } from 'axios'
-import { getJson } from './_request'
+import { addJson, deleteJson, getJson, updateJson } from './_request'
+import { CustomerForm } from '@/schemas/customer'
 
 export type CustomersListParams = {
   page: number
@@ -15,10 +16,83 @@ export type CustomersListParams = {
   fixedFilters?: string[]
   fixedConds?: Array<{ field: string; op: 'eq' | 'ne' | 'gt' | 'lt' | 'gte' | 'lte' | 'lk'; value: unknown }>
   signal?: AbortSignal
+  reloadKey?: number
+}
+
+const hasAnyAddressField = (address: CustomerForm['address']) => {
+  if (!address) return false
+
+  return (
+    !!address.postalCode?.trim() ||
+    !!address.street?.trim() ||
+    !!address.addressLine?.trim() ||
+    !!address.streetNumber?.trim() ||
+    !!address.neighborhood?.trim() ||
+    !!address.city?.trim() ||
+    !!address.state?.trim()
+  )
+}
+
+const toApiCustomerPayload = (form: CustomerForm): ApiCustomerCreate => {
+  const hasAddress = hasAnyAddressField(form.address)
+
+  return {
+    status: form.status,
+    name: form.name,
+    phone: form.phone?.replace(/\D/g, '') != '' ? form.phone : null,
+    email: form.email != '' ? form.email : null,
+    rg: form.rg,
+    cpf: form.cpf?.replace(/\D/g, ''),
+    dateBirth: form.dateBirth?.toISOString().slice(0, 10), // "YYYY-MM-DD"
+    profession: form.profession ?? '',
+    maritalStatus: form.maritalStatus,
+    address: hasAddress
+      ? {
+          postalCode: form.address.postalCode?.replace(/\D/g, '') ?? '0',
+          street: form.address.street,
+          addressLine2: form.address.addressLine,
+          streetNumber: form.address.streetNumber,
+          neighborhood: form.address.neighborhood,
+          city: form.address.city,
+          state: form.address.state
+        }
+      : null,
+    propertyProfile: {
+      purchaseGoals:
+        form.propertyProfile.purchaseGoals && form.propertyProfile.purchaseGoals.length > 0
+          ? form.propertyProfile.purchaseGoals.map((g) => g.value)
+          : ['none'],
+      neighborhood: form.propertyProfile.neighborhood.map((n) => ({ id: n.value })),
+      typeOfProperty: form.propertyProfile.typeOfProperty.map((t) => ({ id: t.value })),
+      bedrooms:
+        form.propertyProfile.bedrooms && form.propertyProfile.bedrooms.length > 0
+          ? form.propertyProfile.bedrooms.map((g) => g.value)
+          : ['none'],
+      garage:
+        form.propertyProfile.garage && form.propertyProfile.garage.length > 0
+          ? form.propertyProfile.garage.map((g) => g.value)
+          : ['none']
+    }
+  }
 }
 
 export async function getCustomerById(id: string, config?: AxiosRequestConfig) {
   return getJson<ApiCustomer>(`/Customer/${id}`, config)
+}
+
+export async function addCustomer(form: CustomerForm) {
+  const payload = toApiCustomerPayload(form)
+  console.log('payload', payload)
+  return addJson<ApiCustomer>('/Customer', payload)
+}
+
+export async function updateCustomer(id: string, form: CustomerForm) {
+  const payload = toApiCustomerPayload(form)
+  return updateJson<ApiCustomer>(`/Customer/${id}`, payload)
+}
+
+export async function deleteCustomer(id: string) {
+  return deleteJson<ApiCustomer>(`/Customer/${id}`)
 }
 
 export async function fetchCustomers({
@@ -38,7 +112,7 @@ export async function fetchCustomers({
 }
 
 export function useCustomersList(params: Omit<CustomersListParams, 'signal'>) {
-  const { page, pageSize, search = '', searchFields, fixedFilters, fixedConds } = params
+  const { page, pageSize, search = '', searchFields, fixedFilters, fixedConds, reloadKey } = params
   const debounced = useDebouncedValue(search, 300)
 
   const [rows, setRows] = React.useState<ApiCustomer[]>([])
@@ -78,7 +152,8 @@ export function useCustomersList(params: Omit<CustomersListParams, 'signal'>) {
     debounced,
     (searchFields ?? []).join('|'),
     JSON.stringify(fixedFilters ?? []),
-    JSON.stringify(fixedConds ?? [])
+    JSON.stringify(fixedConds ?? []),
+    reloadKey
   ])
 
   return { rows, totalCount, loading }

@@ -32,6 +32,7 @@ export type ListingTableHeaderProps = {
   loading?: boolean
   includeHref?: string
   includeLabel?: string
+  includeOnClick?: () => void
 }
 
 export const ListingTableHeader = ({
@@ -45,7 +46,8 @@ export const ListingTableHeader = ({
   defaultPageSize = 10,
   loading = false,
   includeHref,
-  includeLabel
+  includeLabel,
+  includeOnClick
 }: ListingTableHeaderProps) => {
   const sizeCollection = React.useMemo(
     () => createListCollection({ items: pageSizeOptions.map((n) => ({ label: String(n), value: String(n) })) }),
@@ -71,6 +73,7 @@ export const ListingTableHeader = ({
               entity={entity}
               includeHref={includeHref}
               includeLabel={includeLabel}
+              includeOnClick={includeOnClick}
             />
           </HStack>
         )}
@@ -166,7 +169,12 @@ export const ListingTableHeader = ({
                   searchValue={searchValue}
                   onSearchChange={onSearchChange}
                 />
-                <ListingTableHeaderAddButton entity={entity} includeHref={includeHref} includeLabel={includeLabel} />
+                <ListingTableHeaderAddButton
+                  entity={entity}
+                  includeHref={includeHref}
+                  includeLabel={includeLabel}
+                  includeOnClick={includeOnClick}
+                />
               </HStack>
             </HStack>
           </Stack>
@@ -205,20 +213,37 @@ const ListingTableHeaderAddButton = ({
   simple,
   entity,
   includeHref,
-  includeLabel
+  includeLabel,
+  includeOnClick
 }: {
   simple?: boolean
   entity: string
   includeHref?: string
   includeLabel?: string
+  includeOnClick?: () => void
 }) => {
-  if (!includeHref) return null
+  if (!includeHref && !includeOnClick) return null
+
+  const label = includeLabel ?? `Novo ${entity}`
+
+  if (includeOnClick) {
+    return !simple ? (
+      <Button onClick={includeOnClick}>
+        <BiPlus />
+        {label}
+      </Button>
+    ) : (
+      <IconButton aria-label={label} onClick={includeOnClick}>
+        <BiPlus />
+      </IconButton>
+    )
+  }
   return (
-    <NextLink href={includeHref}>
+    <NextLink href={includeHref!}>
       {!simple ? (
         <Button>
           <BiPlus />
-          {includeLabel ?? `Novo ${entity}`}
+          {label}
         </Button>
       ) : (
         <IconButton>

@@ -1,4 +1,5 @@
-import { ApiCustomer, CustomerStatus } from '@/@types/api-customer'
+import { ApiCustomer, APICustomerStatus } from '@/@types/api-customer'
+import { CustomerDrawerForm } from '@/components/drawer/customer-drawer-form'
 import { formatDateShort } from '@/utils/date-converter'
 import { formatCPF } from '@/utils/format-doc'
 import { formatPhoneNumber } from '@/utils/format-phone-number'
@@ -17,6 +18,7 @@ import {
   Stack,
   Stat
 } from '@chakra-ui/react'
+import React from 'react'
 
 const statusToBadge = (status?: 'active' | 'inactive' | 'paused') => {
   switch (status) {
@@ -31,8 +33,14 @@ const statusToBadge = (status?: 'active' | 'inactive' | 'paused') => {
   }
 }
 
-export const CustomerViewInfo = ({ customer }: { customer: ApiCustomer }) => {
-  const rawStatus: CustomerStatus | undefined = customer?.status
+export const CustomerViewInfo = ({
+  customer,
+  onCustomerChange
+}: {
+  customer: ApiCustomer
+  onCustomerChange?: (customer: ApiCustomer) => void
+}) => {
+  const rawStatus: APICustomerStatus | undefined = customer?.status
   const { label: statusLabel, colorScheme } = statusToBadge(rawStatus)
   const meta = getMaritalStatusMeta(customer?.maritalStatus)
 
@@ -43,7 +51,10 @@ export const CustomerViewInfo = ({ customer }: { customer: ApiCustomer }) => {
     },
     { label: 'E-mail', value: customer.email },
     { label: 'Telefone', value: formatPhoneNumber(customer.phone) },
-    { label: 'Data de nasc.', value: formatDateShort(customer.dateBirth) },
+    {
+      label: 'Data de nasc.',
+      value: customer?.dateBirth !== '0001-01-01' ? formatDateShort(customer.dateBirth) : null
+    },
     { label: 'RG', value: customer.rg },
     { label: 'CPF', value: formatCPF(customer.cpf) },
     { label: 'Profissão', value: customer.profession },
@@ -52,6 +63,7 @@ export const CustomerViewInfo = ({ customer }: { customer: ApiCustomer }) => {
       value: <Badge colorPalette={meta?.colorPalette}>{meta?.label}</Badge>
     }
   ]
+  const [open, setOpen] = React.useState(false)
 
   return (
     <Stack>
@@ -97,10 +109,22 @@ export const CustomerViewInfo = ({ customer }: { customer: ApiCustomer }) => {
               ))}
             </DataList.Root>
 
-            <Button>Editar cliente</Button>
+            <Button onClick={() => setOpen(true)}>Editar cliente</Button>
           </Stack>
         </Card.Body>
       </Card.Root>
+      <CustomerDrawerForm
+        open={open}
+        onOpenChange={setOpen}
+        mode="edit"
+        initial={customer}
+        onSuccess={(updatedCustomer) => {
+          // atualiza em quem chamou esse componente (página)
+          onCustomerChange?.(updatedCustomer)
+          // fecha o drawer (se o próprio drawer já fechar, isso é redundante mas inofensivo)
+          setOpen(false)
+        }}
+      />
     </Stack>
   )
 }

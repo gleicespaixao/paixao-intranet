@@ -17,6 +17,7 @@
     "@emotion/styled": "^11.14.1",
     "@hookform/resolvers": "^5.2.2",
     "axios": "^1.13.1",
+    "chakra-react-select": "^6.1.0",
     "check-password-strength": "^3.0.0",
     "framer-motion": "^12.23.24",
     "next": "16.0.1",

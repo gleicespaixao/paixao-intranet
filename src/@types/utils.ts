@@ -19,7 +19,7 @@ type ApiUserLogs = {
 }
 
 export type ApiAddress = {
-  postalCode: number
+  postalCode: string
   street: string
   addressLine: string
   streetNumber: string

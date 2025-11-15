@@ -1,30 +1,17 @@
 import { ApiCustomer } from '@/@types/api-customer'
+import { BEDROOM_MAP } from '@/utils/bedroom'
+import { GARAGE_MAP } from '@/utils/garage'
+import { PURCHASE_GOALS_MAP } from '@/utils/purchase-goals'
 import { Badge, Card, Heading, HStack, Stack, StackSeparator, Text } from '@chakra-ui/react'
 import { BiBuildingHouse, BiCar, BiHome, BiHotel, BiTargetLock } from 'react-icons/bi'
 
-// helpers
-const tPurchaseGoal = (g?: ApiCustomer['propertyProfile']['purchaseGoals']) =>
-  g === 'residence' ? 'Moradia' : g === 'investment' ? 'Investimento' : 'Sem preferência'
-
-const tBedrooms = (b?: ApiCustomer['propertyProfile']['bedrooms']) =>
-  b === 'one' ? '1' : b === 'two' ? '2' : b === 'three' ? '3' : b === 'four_plus' ? '4+' : 'Sem preferência'
-
-const tGarage = (g?: ApiCustomer['propertyProfile']['garage']) =>
-  g === 'one' ? '1' : g === 'two' ? '2' : g === 'three' ? '3' : g === 'four_plus' ? '4+' : 'Sem preferência'
-
-const getLinkLabel = (x: unknown) => {
-  if (x && typeof x === 'object') {
-    const anyx = x as { label?: string; name?: string }
-    return anyx.label ?? anyx.name ?? 'Sem preferência'
-  }
-  return 'Sem preferência'
-}
-
 export const CustomerViewPurchaseProfile = ({ customer }: { customer?: ApiCustomer }) => {
   const profile = customer?.propertyProfile
-  const goal = tPurchaseGoal(profile?.purchaseGoals)
-  const bedrooms = tBedrooms(profile?.bedrooms)
-  const garage = tGarage(profile?.garage)
+
+  const goal = profile?.purchaseGoals?.map((g) => PURCHASE_GOALS_MAP[g].label).join(', ') ?? 'Sem preferência'
+  const bedroom = profile?.bedrooms?.map((g) => BEDROOM_MAP[g].label).join(', ') ?? 'Sem preferência'
+  const garage = profile?.garage?.map((g) => GARAGE_MAP[g].label).join(', ') ?? 'Sem preferência'
+
   const types = profile?.typeOfProperty ?? []
   const neighborhoods = profile?.neighborhood ?? []
 
@@ -56,11 +43,11 @@ export const CustomerViewPurchaseProfile = ({ customer }: { customer?: ApiCustom
             {types.length ? (
               <HStack separator={<StackSeparator />} wrap="wrap">
                 {types.map((t, i) => (
-                  <Text key={i}>{getLinkLabel(t)}</Text>
+                  <Text key={i}>{t.name}</Text>
                 ))}
               </HStack>
             ) : (
-              <Text>—</Text>
+              <Text>Sem preferência</Text>
             )}
           </HStack>
 
@@ -71,7 +58,7 @@ export const CustomerViewPurchaseProfile = ({ customer }: { customer?: ApiCustom
               Dormitórios:
             </Text>
             <HStack separator={<StackSeparator />}>
-              <Text>{bedrooms}</Text>
+              <Text>{bedroom}</Text>
             </HStack>
           </HStack>
 
@@ -95,11 +82,11 @@ export const CustomerViewPurchaseProfile = ({ customer }: { customer?: ApiCustom
             {neighborhoods.length ? (
               <HStack gap={2} wrap="wrap">
                 {neighborhoods.map((n, i) => (
-                  <Badge key={i}>{getLinkLabel(n)}</Badge>
+                  <Badge key={i}>{n.name}</Badge>
                 ))}
               </HStack>
             ) : (
-              <Text>—</Text>
+              <Text>Sem preferência</Text>
             )}
           </HStack>
         </Stack>

@@ -46,6 +46,7 @@ export type ListingTableProps<TRow extends Record<string, unknown>> = {
   loading?: boolean
   includeHref?: string
   includeLabel?: string
+  includeOnClick?: () => void
 }
 type StringKeyOf<T> = Extract<keyof T, string>
 
@@ -67,7 +68,8 @@ export const ListingTable = <TRow extends Record<string, unknown>>({
   getRowId,
   loading = false,
   includeHref,
-  includeLabel
+  includeLabel,
+  includeOnClick
 }: ListingTableProps<TRow>) => {
   function hasIdKey(obj: unknown): obj is { id: React.Key } {
     return typeof obj === 'object' && obj !== null && 'id' in obj
@@ -94,6 +96,7 @@ export const ListingTable = <TRow extends Record<string, unknown>>({
         loading={loading}
         includeHref={includeHref}
         includeLabel={includeLabel}
+        includeOnClick={includeOnClick}
       />
       {/* TABELA (exemplo simples; troque livremente) */}
       <Stack width="full" gap="5">

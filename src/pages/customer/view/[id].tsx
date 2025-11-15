@@ -47,7 +47,7 @@ const ProfilePage: NextPageWithLayout = () => {
     return null
   }
 
-  return <ModuleCustomerView customer={customer} />
+  return <ModuleCustomerView customer={customer} onCustomerChange={setCustomer} />
 }
 
 ProfilePage.getLayout = (page) => <AppLayout title={title}>{page}</AppLayout>

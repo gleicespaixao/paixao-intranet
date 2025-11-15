@@ -21,3 +21,8 @@ export function getMaritalStatusMeta(value?: string): Meta {
 export function translateMaritalStatus(value?: string): string {
   return getMaritalStatusMeta(value).label
 }
+// 👉 gera opções para selects
+export const MARITAL_STATUS_OPTIONS = (Object.keys(MARITAL_STATUS_MAP) as MaritalStatus[]).map((key) => ({
+  value: key,
+  label: MARITAL_STATUS_MAP[key].label
+}))

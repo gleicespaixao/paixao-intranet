@@ -52,6 +52,7 @@ export function ControlledInputDate<T extends FieldValues>({
           <Field invalid={!!error}>
             {label && <FieldLabel>{label}</FieldLabel>}
             <DatePicker
+              zIndex={9999}
               value={inputCalendarValue ? new DateObject(inputCalendarValue) : null}
               onChange={(date) => onChange(date ? (date as DateObject).toDate() : null)}
               format="DD/MM/YYYY"
