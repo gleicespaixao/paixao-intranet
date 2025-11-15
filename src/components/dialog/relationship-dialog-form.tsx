@@ -1,5 +1,5 @@
 import * as React from 'react'
-import { Drawer, Button, Grid, CloseButton, HStack, GridItem, IconButton } from '@chakra-ui/react'
+import { Dialog, Button, Grid, CloseButton, HStack, GridItem, IconButton } from '@chakra-ui/react'
 import { Form } from '@/components/form'
 import { DefaultValues, useForm, useWatch } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
@@ -13,8 +13,10 @@ import { RelationshipForm, schemaRelationship } from '@/schemas/relationship'
 import { addRelationship, deleteRelationship, updateRelationship } from '@/services/relationship'
 import { formatPhoneNumber } from '@/utils/format-phone-number'
 import { RELATIONSHIP_TYPE_OPTIONS } from '@/utils/relationship-type'
-import { DeleteDialog } from '../dialog/controled'
-import { BiTrashAlt } from 'react-icons/bi'
+import { DeleteDialog } from './controled'
+import { BiPlus, BiTrashAlt } from 'react-icons/bi'
+import { Tooltip } from '../ui/tooltip'
+import { CustomerDrawerForm } from '../drawer/customer-drawer-form'
 
 type Props = {
   open: boolean
@@ -44,7 +46,7 @@ const toDefaultValues = (
   }
 }
 
-export function RelationshipDrawerForm({ open, onOpenChange, mode, initial, customer, onSuccess }: Props) {
+export function RelationshipDialogForm({ open, onOpenChange, mode, initial, customer, onSuccess }: Props) {
   const defaultValues = React.useMemo(() => toDefaultValues(customer, initial), [customer, initial])
 
   const {
@@ -60,6 +62,8 @@ export function RelationshipDrawerForm({ open, onOpenChange, mode, initial, cust
   // controla o dialog de delete
   const [deleteOpen, setDeleteOpen] = React.useState(false)
   const [deleteLoading, setDeleteLoading] = React.useState(false)
+
+  const [customerOpen, setCustomerOpen] = React.useState(false)
 
   React.useEffect(() => {
     if (open) {
@@ -120,16 +124,16 @@ export function RelationshipDrawerForm({ open, onOpenChange, mode, initial, cust
 
   return (
     <>
-      <Drawer.Root open={open} onOpenChange={(details) => onOpenChange(details.open)} placement="end" size="md">
-        <Drawer.Backdrop />
-        <Drawer.Positioner>
-          <Drawer.Content>
-            <Drawer.Header>
-              <Drawer.Title>{mode === 'create' ? 'Novo' : 'Editar'} relacionamento</Drawer.Title>
-              <Drawer.CloseTrigger />
-            </Drawer.Header>
+      <Dialog.Root open={open} onOpenChange={(details) => onOpenChange(details.open)} size="md">
+        <Dialog.Backdrop />
+        <Dialog.Positioner>
+          <Dialog.Content>
+            <Dialog.Header>
+              <Dialog.Title>{mode === 'create' ? 'Novo' : 'Editar'} relacionamento</Dialog.Title>
+              <Dialog.CloseTrigger />
+            </Dialog.Header>
 
-            <Drawer.Body>
+            <Dialog.Body>
               <Form id="relationship-form" hookFormHandleSubmit={handleSubmit} onSubmit={onSubmit}>
                 <Grid templateColumns={{ base: '1fr', md: '1fr 1fr' }} gap={4}>
                   <GridItem as={HStack} colSpan={{ base: 1, md: 2 }}>
@@ -162,6 +166,18 @@ export function RelationshipDrawerForm({ open, onOpenChange, mode, initial, cust
                         return []
                       }}
                     />
+                    {mode === 'create' && (
+                      <Tooltip content="Novo cliente" openDelay={300}>
+                        <IconButton
+                          mt={6}
+                          aria-label="Novo cliente"
+                          variant="subtle"
+                          onClick={() => setCustomerOpen(true)}
+                        >
+                          <BiPlus />
+                        </IconButton>
+                      </Tooltip>
+                    )}
                   </GridItem>
 
                   <ControlledSelect
@@ -184,8 +200,8 @@ export function RelationshipDrawerForm({ open, onOpenChange, mode, initial, cust
                   )}
                 </Grid>
               </Form>
-            </Drawer.Body>
-            <Drawer.Footer justifyContent={mode !== 'create' ? 'space-between' : 'end'}>
+            </Dialog.Body>
+            <Dialog.Footer justifyContent={mode !== 'create' ? 'space-between' : 'end'}>
               {mode !== 'create' && (
                 <IconButton
                   aria-label="Excluir relacionamento"
@@ -199,15 +215,15 @@ export function RelationshipDrawerForm({ open, onOpenChange, mode, initial, cust
               <Button type="submit" form="relationship-form" loading={isSubmitting}>
                 {mode === 'create' ? 'Salvar' : 'Atualizar'} relacionamento
               </Button>
-            </Drawer.Footer>
+            </Dialog.Footer>
 
-            <Drawer.CloseTrigger asChild>
+            <Dialog.CloseTrigger asChild>
               <CloseButton size="sm" />
-            </Drawer.CloseTrigger>
-          </Drawer.Content>
-        </Drawer.Positioner>
-      </Drawer.Root>
-      {mode !== 'create' && (
+            </Dialog.CloseTrigger>
+          </Dialog.Content>
+        </Dialog.Positioner>
+      </Dialog.Root>
+      {mode !== 'create' ? (
         <DeleteDialog
           open={deleteOpen}
           onOpenChange={setDeleteOpen}
@@ -215,7 +231,17 @@ export function RelationshipDrawerForm({ open, onOpenChange, mode, initial, cust
           entity="relacionamento"
           itemName={linkedCustomerName}
           onConfirm={handleConfirmDelete}
-          // se cancelar, o RelationshipDialog continua aberto com o form intacto
+        />
+      ) : (
+        <CustomerDrawerForm
+          open={customerOpen}
+          onOpenChange={setCustomerOpen}
+          mode="create"
+          initial={undefined}
+          // onSuccess={() => {
+          //   // 👉 depois de salvar, recarrega a lista
+          //   setReloadKey((k) => k + 1)
+          // }}
         />
       )}
     </>

@@ -1,6 +1,6 @@
 import { ApiCustomer } from '@/@types/api-customer'
 import { ApiRelationship } from '@/@types/api-relationship'
-import { RelationshipDrawerForm } from '@/components/drawer/relationship-drawer-form'
+import { RelationshipDialogForm } from '@/components/dialog/relationship-dialog-form'
 import { ColumnDef, ListingTable } from '@/components/listing-table'
 import { Tooltip } from '@/components/ui/tooltip'
 import { useRelationshipList } from '@/services/relationship'
@@ -124,7 +124,7 @@ export const CustomerViewRelationship = ({ customer }: { customer: ApiCustomer }
           />
         </Card.Body>
       </Card.Root>
-      <RelationshipDrawerForm
+      <RelationshipDialogForm
         open={open}
         onOpenChange={(isOpen) => {
           if (!isOpen) {
