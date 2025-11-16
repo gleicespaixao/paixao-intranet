@@ -11,6 +11,8 @@ export type APICustomerPropertyProfileGarage = ApiGarages
 export type ApiCustomer = {
   id: string
   status: APICustomerStatus
+  ticketAverage: number
+  lastPurchaseAmount: number
   token: number
   name: string
   phone: string

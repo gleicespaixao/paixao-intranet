@@ -80,7 +80,7 @@ export const CustomerViewInfo = ({
             <Stat.Root borderWidth="1px" minW="40" gap={0} p="4" rounded="md">
               <Stat.ValueText fontSize="lg">
                 <LocaleProvider locale="pt-BR">
-                  <FormatNumber value={214532} style="currency" currency="BRL" />
+                  <FormatNumber value={customer.ticketAverage} style="currency" currency="BRL" />
                 </LocaleProvider>
               </Stat.ValueText>
               <Stat.Label>Ticket médio</Stat.Label>
@@ -89,7 +89,7 @@ export const CustomerViewInfo = ({
             <Stat.Root borderWidth="1px" minW="40" gap={0} p="4" rounded="md">
               <Stat.ValueText fontSize="lg">
                 <LocaleProvider locale="pt-BR">
-                  <FormatNumber value={192523} style="currency" currency="BRL" />
+                  <FormatNumber value={customer.lastPurchaseAmount} style="currency" currency="BRL" />
                 </LocaleProvider>
               </Stat.ValueText>
               <Stat.Label>Última compra</Stat.Label>

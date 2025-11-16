@@ -72,7 +72,7 @@ export const ModuleCustomerView = ({
                 <Stack gap={4}>
                   <CustomerViewPurchaseProfile customer={customer} />
                   <CustomerViewAddress customer={customer} />
-                  <CustomerViewPurchaseHistory customer={customer} />
+                  <CustomerViewPurchaseHistory customer={customer} onCustomerChange={onCustomerChange} />
                   <CustomerViewCompany customer={customer} />
                   <CustomerViewRelationship customer={customer} />
                 </Stack>
