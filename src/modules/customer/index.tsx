@@ -4,7 +4,6 @@ import * as React from 'react'
 import { PageHeader } from '@/components/layout/page-header'
 import { Badge, Card, HStack, IconButton } from '@chakra-ui/react'
 import { ColumnDef, ListingTable } from '@/components/listing-table'
-import { formatPhoneNumber } from '@/utils/format-phone-number'
 import { Tooltip } from '@/components/ui/tooltip'
 import { BiShow } from 'react-icons/bi'
 import NextLink from 'next/link'
@@ -13,6 +12,7 @@ import { useCustomersList } from '@/services/customer'
 import { CustomerDrawerForm } from '@/components/drawer/customer-drawer-form'
 import { getCustomerStatusMeta } from '@/utils/customer-status'
 import { ApiCustomerStatus } from '@/schemas/customer'
+import { formatPhoneForList } from '@/utils/phone-ddi-config'
 
 type Row = { id: string; name: string; phone: string; email: string; status: ApiCustomerStatus }
 
@@ -57,7 +57,7 @@ export const ModuleCustomer = ({ title }: { title: string }) => {
   const columns = React.useMemo<ColumnDef<Row>[]>(
     () => [
       { header: 'Nome', accessorKey: 'name' },
-      { header: 'Telefone', accessorKey: 'phone', cell: (r) => formatPhoneNumber(String(r.phone ?? '')) },
+      { header: 'Telefone', accessorKey: 'phone', cell: (r) => formatPhoneForList(String(r.phone ?? ''), true) },
       { header: 'E-mail', accessorKey: 'email' },
       {
         id: 'status',

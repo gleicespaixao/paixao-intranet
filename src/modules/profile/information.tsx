@@ -1,5 +1,3 @@
-import { withMask } from 'use-mask-input'
-
 import * as React from 'react'
 import { useSession } from 'next-auth/react'
 import { useForm } from 'react-hook-form'
@@ -12,8 +10,8 @@ import { toaster } from '@/components/ui/toaster'
 import { ControlledInputDate } from '@/components/controlled-input/date'
 import { schemaUserSimple, UserSimpleForm } from '@/schemas/user'
 import { updateUserSimple } from '@/services/user'
-import { formatPhoneNumber } from '@/utils/format-phone-number'
 import { Form } from '@/components/form'
+import { ControlledPhone } from '@/components/controlled-input/controlled-phone-input'
 
 export const ModuleProfileInformation = () => {
   const { data: session, update } = useSession()
@@ -34,7 +32,7 @@ export const ModuleProfileInformation = () => {
         session?.user?.dateBirth && session?.user?.dateBirth !== '0001-01-01'
           ? new Date(session?.user?.dateBirth + 'T12:00:00')
           : undefined,
-      phone: formatPhoneNumber(session?.user?.phone)
+      phone: session?.user?.phone ?? ''
     }
   })
   const [profileError, setProfileError] = React.useState<string | null>(null)
@@ -57,7 +55,7 @@ export const ModuleProfileInformation = () => {
     reset({
       ...res.data,
       dateBirth: new Date(dateBirth + 'T12:00:00'),
-      phone: formatPhoneNumber(phone)
+      phone: phone
     } as unknown as UserSimpleForm)
   }
   return (
@@ -119,14 +117,12 @@ export const ModuleProfileInformation = () => {
               />
             </Fieldset.Root>
             <Fieldset.Root gap="3" mt="2">
-              <ControlledInput<UserSimpleForm>
-                startElement="BR +55"
-                ps="16"
-                name="phone"
+              <ControlledPhone<UserSimpleForm>
                 control={control}
+                name="phone"
                 label="Telefone"
                 error={errors.phone?.message}
-                ref={withMask(['(99) 9999-9999', '(99) 99999-9999'])}
+                required
               />
             </Fieldset.Root>
 

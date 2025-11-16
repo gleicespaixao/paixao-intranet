@@ -3,8 +3,8 @@ import { CustomerDrawerForm } from '@/components/drawer/customer-drawer-form'
 import { getCustomerStatusMeta } from '@/utils/customer-status'
 import { formatDateShort } from '@/utils/date-converter'
 import { formatCPF } from '@/utils/format-doc'
-import { formatPhoneNumber } from '@/utils/format-phone-number'
 import { getMaritalStatusMeta } from '@/utils/marital-status'
+import { formatPhoneForList } from '@/utils/phone-ddi-config'
 import {
   Avatar,
   Badge,
@@ -38,7 +38,7 @@ export const CustomerViewInfo = ({
       value: <Badge colorPalette={colorPalette}>{label}</Badge>
     },
     { label: 'E-mail', value: customer.email },
-    { label: 'Telefone', value: formatPhoneNumber(customer.phone) },
+    { label: 'Telefone', value: formatPhoneForList(customer.phone, true) },
     {
       label: 'Data de nasc.',
       value: customer?.dateBirth !== '0001-01-01' ? formatDateShort(customer.dateBirth) : null

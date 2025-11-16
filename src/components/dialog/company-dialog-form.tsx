@@ -5,13 +5,13 @@ import { DefaultValues, useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import type { ApiCustomer } from '@/@types/api-customer'
 import { ControlledSelectAsync } from '../controlled-select/controlled-select-async'
-import { formatPhoneNumber } from '@/utils/format-phone-number'
 import { BiPlus } from 'react-icons/bi'
 import { Tooltip } from '../ui/tooltip'
 import { addCustumerCompany, fetchCompany } from '@/services/company'
 import { ApiCompany } from '@/@types/api-company'
 import { CompanyCustomerForm, schemaCompanyCustomer } from '@/schemas/company'
 import { CompanyDrawerForm } from '../drawer/company-drawer-form'
+import { formatPhoneForList } from '@/utils/phone-ddi-config'
 
 type Props = {
   open: boolean
@@ -104,7 +104,7 @@ export function CompanyDialogForm({ open, onOpenChange, initial, customer, onSuc
 
                         if (res.success && res.data) {
                           return res.data.records.map((c) => ({
-                            label: `${c.name} - ${c.email ?? formatPhoneNumber(c.phone)}`,
+                            label: `${c.name} - ${c.email ?? formatPhoneForList(c.phone, true)}`,
                             value: c.id
                           }))
                         }
@@ -147,7 +147,7 @@ export function CompanyDialogForm({ open, onOpenChange, initial, customer, onSuc
         onSuccess={(createdCompany) => {
           setValue('company', {
             value: createdCompany.id,
-            label: `${createdCompany.name} - ${createdCompany.email ?? formatPhoneNumber(createdCompany.phone)}`
+            label: `${createdCompany.name} - ${createdCompany.email ?? formatPhoneForList(createdCompany.phone, true)}`
           })
         }}
       />

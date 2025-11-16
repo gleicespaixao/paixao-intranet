@@ -4,12 +4,12 @@ import { ColumnDef, ListingTable } from '@/components/listing-table'
 import { removeCustumerCompany, useCompanyList } from '@/services/company'
 import { Card, HStack, IconButton } from '@chakra-ui/react'
 import React from 'react'
-import { formatPhoneNumber } from '@/utils/format-phone-number'
 import { formatCNPJ } from '@/utils/format-doc'
 import { CompanyDialogForm } from '@/components/dialog/company-dialog-form'
 import { BiTrashAlt } from 'react-icons/bi'
 import { Tooltip } from '@/components/ui/tooltip'
 import { DeleteDialog } from '@/components/dialog/controled'
+import { formatPhoneForList } from '@/utils/phone-ddi-config'
 
 type Row = {
   id: string
@@ -53,7 +53,7 @@ export const CustomerViewCompany = ({ customer }: { customer: ApiCustomer }) => 
         return {
           id: r.id,
           name: r?.name ?? '',
-          phone: formatPhoneNumber(r?.phone) ?? '',
+          phone: formatPhoneForList(r?.phone, true) ?? '',
           cnpj: formatCNPJ(r?.cnpj) ?? ''
         }
       }),

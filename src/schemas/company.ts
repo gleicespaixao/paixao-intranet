@@ -1,24 +1,14 @@
 import { z } from 'zod'
-import { isValidCNPJ, phoneRegex, validDdds } from './utils'
+import { internationalPhoneRegex, isValidCNPJ } from './utils'
 
 export const schemaCompanyBase = z.object({
   name: z.string().min(3, 'Nome é obrigatório').max(120, 'Máximo de 120 caracteres'),
   phone: z
     .string()
-    .transform((val) => val.replace(/\D/g, ''))
-    .refine((val) => !val || phoneRegex.test(val), {
+    .min(8, 'Número de telefone inválido')
+    .refine((val) => internationalPhoneRegex.test(val.replace(/[()\s-]/g, '')), {
       message: 'Número de telefone inválido'
-    })
-    .refine(
-      (val) => {
-        if (!val) return true
-        const ddd = val.slice(0, 2)
-        return validDdds.includes(ddd)
-      },
-      {
-        message: 'DDD inválido'
-      }
-    ),
+    }),
   email: z.string().email('E-mail inválido').optional().or(z.literal('')),
   cnpj: z
     .string()

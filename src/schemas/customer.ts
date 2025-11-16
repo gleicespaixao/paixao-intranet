@@ -1,5 +1,5 @@
 import { z } from 'zod'
-import { isValidCPF, phoneRegex, validDdds } from './utils'
+import { internationalPhoneRegex, isValidCPF } from './utils'
 
 export const apiCustomerStatus = z.enum(['active', 'inactive', 'paused'])
 export const apiCustomerMarital = z.enum(['single', 'married', 'separated', 'widowed', 'other'])
@@ -21,20 +21,10 @@ export const schemaCustomerBase = z.object({
   dateBirth: z.date('Data de nascimento inválida').nullish(),
   phone: z
     .string()
-    .transform((val) => val.replace(/\D/g, ''))
-    .refine((val) => !val || phoneRegex.test(val), {
+    .min(8, 'Número de telefone inválido')
+    .refine((val) => internationalPhoneRegex.test(val.replace(/[()\s-]/g, '')), {
       message: 'Número de telefone inválido'
-    })
-    .refine(
-      (val) => {
-        if (!val) return true
-        const ddd = val.slice(0, 2)
-        return validDdds.includes(ddd)
-      },
-      {
-        message: 'DDD inválido'
-      }
-    ),
+    }),
 
   profession: z.string().optional(),
   maritalStatus: apiCustomerMarital,

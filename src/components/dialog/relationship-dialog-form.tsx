@@ -11,12 +11,12 @@ import { fetchCustomers } from '@/services/customer'
 import { ApiRelationship } from '@/@types/api-relationship'
 import { RelationshipForm, schemaRelationship } from '@/schemas/relationship'
 import { addRelationship, deleteRelationship, updateRelationship } from '@/services/relationship'
-import { formatPhoneNumber } from '@/utils/format-phone-number'
 import { RELATIONSHIP_TYPE_OPTIONS } from '@/utils/relationship-type'
 import { DeleteDialog } from './controled'
 import { BiPlus, BiTrashAlt } from 'react-icons/bi'
 import { Tooltip } from '../ui/tooltip'
 import { CustomerDrawerForm } from '../drawer/customer-drawer-form'
+import { formatPhoneForList } from '@/utils/phone-ddi-config'
 
 type Props = {
   open: boolean
@@ -158,7 +158,7 @@ export function RelationshipDialogForm({ open, onOpenChange, mode, initial, cust
 
                         if (res.success && res.data) {
                           return res.data.records.map((c) => ({
-                            label: `${c.name} - ${c.email ?? formatPhoneNumber(c.phone)}`,
+                            label: `${c.name} - ${c.email ?? formatPhoneForList(c.phone, true)}`,
                             value: c.id
                           }))
                         }

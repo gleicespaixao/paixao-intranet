@@ -31,6 +31,7 @@ import { addCustomer, updateCustomer } from '@/services/customer'
 import { Garage, GARAGE_MAP, GARAGE_OPTIONS } from '@/utils/garage'
 import { useCepAutoFill } from '@/hooks/use-cep-auto-fill'
 import { CUSTOMER_STATUS_OPTIONS } from '@/utils/customer-status'
+import { ControlledPhone } from '../controlled-input/controlled-phone-input'
 
 type Props = {
   open: boolean
@@ -228,12 +229,12 @@ export function CustomerDrawerForm({ open, onOpenChange, mode, initial, onSucces
                         <Separator flex="1" />
                       </GridItem>
                       <ControlledInput name="email" control={control} label="E-mail" error={errors.email?.message} />
-                      <ControlledInput
-                        name="phone"
+                      <ControlledPhone
                         control={control}
+                        name="phone"
                         label="Telefone"
                         error={errors.phone?.message}
-                        ref={withMask(['(99) 9999-9999', '(99) 99999-9999'])}
+                        required
                       />
                       <GridItem as={HStack} colSpan={{ base: 1, md: 2 }}>
                         <Separator flex="1" />

@@ -24,12 +24,12 @@ import { ApiPurchaseHistory } from '@/@types/api-purchase-history'
 import { addPurchaseHistory, deletePurchaseHistory, updatePurchaseHistory } from '@/services/purchase-history'
 import { ControlledCurrencyInput } from '../controlled-input/controlled-currency-input'
 import { fetchCustomers } from '@/services/customer'
-import { formatPhoneNumber } from '@/utils/format-phone-number'
 import { ControlledInputNumber } from '../controlled-input/controlled-input-number'
 import { BiTrashAlt } from 'react-icons/bi'
 import { ApiCustomer } from '@/@types/api-customer'
 import { formatBrCurrencyFromNumber } from '@/hooks/use-currency-brl.ts'
 import { DeleteDialog } from '../dialog/controled'
+import { formatPhoneForList } from '@/utils/phone-ddi-config'
 
 type Props = {
   open: boolean
@@ -374,7 +374,7 @@ export function PurchaseHistoryDrawerForm({ open, onOpenChange, mode, customer, 
                                 return res.data.records
                                   .filter((c) => !selectedIds.includes(c.id))
                                   .map((c) => ({
-                                    label: `${c.name} - ${c.email ?? formatPhoneNumber(c.phone)}`,
+                                    label: `${c.name} - ${c.email ?? formatPhoneForList(c.phone, true)}`,
                                     value: c.id
                                   }))
                               }}

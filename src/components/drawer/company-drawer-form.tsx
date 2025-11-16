@@ -21,6 +21,7 @@ import { CompanyForm, schemaCompany } from '@/schemas/company'
 import { ApiCompany } from '@/@types/api-company'
 import { addCompany, updateCompany } from '@/services/company'
 import { useCepAutoFill } from '@/hooks/use-cep-auto-fill'
+import { ControlledPhone } from '../controlled-input/controlled-phone-input'
 
 type Props = {
   open: boolean
@@ -152,12 +153,12 @@ export function CompanyDrawerForm({ open, onOpenChange, mode, initial, onSuccess
                         <Separator flex="1" />
                       </GridItem>
                       <ControlledInput name="email" control={control} label="E-mail" error={errors.email?.message} />
-                      <ControlledInput
-                        name="phone"
+                      <ControlledPhone
                         control={control}
+                        name="phone"
                         label="Telefone"
                         error={errors.phone?.message}
-                        ref={withMask(['(99) 9999-9999', '(99) 99999-9999'])}
+                        required
                       />
                       <GridItem as={HStack} colSpan={{ base: 1, md: 2 }}>
                         <Separator flex="1" />
