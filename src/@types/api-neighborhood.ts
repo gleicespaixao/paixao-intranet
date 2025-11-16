@@ -9,3 +9,10 @@ export type ApiNeighborhood = {
   state: string
   logs: ApiLog
 }
+
+export type ApiNeighborhoodCreateUpdate = {
+  status: boolean
+  name: string
+  city: string
+  state: string
+}
