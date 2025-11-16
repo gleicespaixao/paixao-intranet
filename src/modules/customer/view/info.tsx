@@ -1,5 +1,6 @@
-import { ApiCustomer, APICustomerStatus } from '@/@types/api-customer'
+import { ApiCustomer } from '@/@types/api-customer'
 import { CustomerDrawerForm } from '@/components/drawer/customer-drawer-form'
+import { getCustomerStatusMeta } from '@/utils/customer-status'
 import { formatDateShort } from '@/utils/date-converter'
 import { formatCPF } from '@/utils/format-doc'
 import { formatPhoneNumber } from '@/utils/format-phone-number'
@@ -20,19 +21,6 @@ import {
 } from '@chakra-ui/react'
 import React from 'react'
 
-const statusToBadge = (status?: 'active' | 'inactive' | 'paused') => {
-  switch (status) {
-    case 'active':
-      return { label: 'Ativo', colorScheme: 'green' as const }
-    case 'paused':
-      return { label: 'Pausado', colorScheme: 'yellow' as const }
-    case 'inactive':
-      return { label: 'Inativo', colorScheme: 'red' as const }
-    default:
-      return { label: '—', colorScheme: 'gray' as const }
-  }
-}
-
 export const CustomerViewInfo = ({
   customer,
   onCustomerChange
@@ -40,14 +28,14 @@ export const CustomerViewInfo = ({
   customer: ApiCustomer
   onCustomerChange?: (customer: ApiCustomer) => void
 }) => {
-  const rawStatus: APICustomerStatus | undefined = customer?.status
-  const { label: statusLabel, colorScheme } = statusToBadge(rawStatus)
   const meta = getMaritalStatusMeta(customer?.maritalStatus)
+
+  const { label, colorPalette } = getCustomerStatusMeta(customer?.status)
 
   const stats = [
     {
       label: 'Status',
-      value: <Badge colorPalette={colorScheme}>{statusLabel}</Badge>
+      value: <Badge colorPalette={colorPalette}>{label}</Badge>
     },
     { label: 'E-mail', value: customer.email },
     { label: 'Telefone', value: formatPhoneNumber(customer.phone) },

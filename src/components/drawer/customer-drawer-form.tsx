@@ -20,7 +20,6 @@ import type { ApiCustomer } from '@/@types/api-customer'
 import { ControlledInput } from '../controlled-input/controlled-input'
 import { withMask } from 'use-mask-input'
 import { ControlledInputDate } from '../controlled-input/date'
-import { CUSTOMER_STATUS_OPTIONS } from '@/utils/customer-status'
 import { ControlledSelect } from '../controlled-select/controlled-select'
 import { MARITAL_STATUS_OPTIONS } from '@/utils/marital-status'
 import { PURCHASE_GOALS_MAP, PURCHASE_GOALS_OPTIONS, PurchaseGoals } from '@/utils/purchase-goals'
@@ -31,6 +30,7 @@ import { Bedroom, BEDROOM_MAP, BEDROOM_OPTIONS } from '@/utils/bedroom'
 import { addCustomer, updateCustomer } from '@/services/customer'
 import { Garage, GARAGE_MAP, GARAGE_OPTIONS } from '@/utils/garage'
 import { useCepAutoFill } from '@/hooks/use-cep-auto-fill'
+import { CUSTOMER_STATUS_OPTIONS } from '@/utils/customer-status'
 
 type Props = {
   open: boolean

@@ -100,6 +100,7 @@ export const schemaCustomer = schemaCustomerBase.refine(
 )
 
 export type CustomerForm = z.infer<typeof schemaCustomer>
+export type ApiCustomerStatus = z.infer<typeof apiCustomerStatus>
 export type ApiPurchaseGoals = z.infer<typeof apiPurchaseGoals>
 export type ApiBedrooms = z.infer<typeof apiBedrooms>
 export type ApiGarages = z.infer<typeof apiGarages>

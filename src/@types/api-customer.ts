@@ -1,8 +1,8 @@
-import { ApiBedrooms, ApiGarages, ApiPurchaseGoals } from '@/schemas/customer'
+import { ApiBedrooms, ApiCustomerStatus, ApiGarages, ApiPurchaseGoals } from '@/schemas/customer'
 import { ApiAddress, ApiLog } from './utils'
 
 import { ApiItemLinks } from './utils'
-export type APICustomerStatus = 'active' | 'inactive' | 'paused'
+export type APICustomerStatus = ApiCustomerStatus
 export type APICustomerMaritalStatus = 'single' | 'married' | 'separated' | 'widowed' | 'other'
 export type APICustomerPropertyProfilePurchaseGoals = ApiPurchaseGoals
 export type APICustomerPropertyProfileBedrooms = ApiBedrooms

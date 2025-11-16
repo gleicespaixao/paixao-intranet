@@ -2,7 +2,7 @@
 
 import * as React from 'react'
 import { PageHeader } from '@/components/layout/page-header'
-import { Card, HStack, IconButton } from '@chakra-ui/react'
+import { Badge, Card, HStack, IconButton } from '@chakra-ui/react'
 import { ColumnDef, ListingTable } from '@/components/listing-table'
 import { formatPhoneNumber } from '@/utils/format-phone-number'
 import { Tooltip } from '@/components/ui/tooltip'
@@ -11,8 +11,10 @@ import NextLink from 'next/link'
 import type { ApiCustomer } from '@/@types/api-customer'
 import { useCustomersList } from '@/services/customer'
 import { CustomerDrawerForm } from '@/components/drawer/customer-drawer-form'
+import { getCustomerStatusMeta } from '@/utils/customer-status'
+import { ApiCustomerStatus } from '@/schemas/customer'
 
-type Row = { id: string; name: string; phone: string; email: string }
+type Row = { id: string; name: string; phone: string; email: string; status: ApiCustomerStatus }
 
 export const ModuleCustomer = ({ title }: { title: string }) => {
   const entity = 'cliente'
@@ -46,7 +48,8 @@ export const ModuleCustomer = ({ title }: { title: string }) => {
         id: r.id,
         name: r.name ?? '',
         phone: r.phone ?? '',
-        email: r.email ?? ''
+        email: r.email ?? '',
+        status: r.status ?? 'inative'
       })),
     [apiRows]
   )
@@ -56,6 +59,14 @@ export const ModuleCustomer = ({ title }: { title: string }) => {
       { header: 'Nome', accessorKey: 'name' },
       { header: 'Telefone', accessorKey: 'phone', cell: (r) => formatPhoneNumber(String(r.phone ?? '')) },
       { header: 'E-mail', accessorKey: 'email' },
+      {
+        id: 'status',
+        header: 'Status',
+        cell: (r) => {
+          const { label, colorPalette } = getCustomerStatusMeta(r.status)
+          return <Badge colorPalette={colorPalette}>{label}</Badge>
+        }
+      },
       {
         id: 'actions',
         header: 'Ações',
