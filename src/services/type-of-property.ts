@@ -4,8 +4,9 @@ import { joinFilters, like, cond } from '@/services/_filters'
 import { useDebouncedValue } from '@/services/_search' // seu debounce
 import * as React from 'react'
 import { AxiosRequestConfig } from 'axios'
-import { getJson } from './_request'
-import { ApiTypeOfProperty } from '@/@types/api-type-of-property'
+import { addJson, deleteJson, getJson, updateJson } from './_request'
+import { ApiTypeOfProperty, ApiTypeOfPropertyCreateUpdate } from '@/@types/api-type-of-property'
+import { TypeOfPropertyForm } from '@/schemas/type-of-property'
 
 export type TypeOfPropertyListParams = {
   page?: number
@@ -15,10 +16,32 @@ export type TypeOfPropertyListParams = {
   fixedFilters?: string[]
   fixedConds?: Array<{ field: string; op: 'eq' | 'ne' | 'gt' | 'lt' | 'gte' | 'lte' | 'lk'; value: unknown }>
   signal?: AbortSignal
+  reloadKey?: number
+}
+
+const toApiTypeOfPropertyPayload = (form: TypeOfPropertyForm): ApiTypeOfPropertyCreateUpdate => {
+  return {
+    status: form.status === 'active' ? true : false,
+    name: form.name
+  }
 }
 
 export async function getTypeOfPropertyById(id: string, config?: AxiosRequestConfig) {
   return getJson<ApiTypeOfProperty>(`/TypeOfProperty/${id}`, config)
+}
+
+export async function addTypeOfProperty(form: TypeOfPropertyForm) {
+  const payload = toApiTypeOfPropertyPayload(form)
+  return addJson<ApiTypeOfProperty>('/TypeOfProperty', payload)
+}
+
+export async function updateTypeOfProperty(id: string, form: TypeOfPropertyForm) {
+  const payload = toApiTypeOfPropertyPayload(form)
+  return updateJson<ApiTypeOfProperty>(`/TypeOfProperty/${id}`, payload)
+}
+
+export async function deleteTypeOfProperty(id: string) {
+  return deleteJson<ApiTypeOfProperty>(`/TypeOfProperty/${id}`)
 }
 
 export async function fetchTypeOfProperty({
@@ -38,7 +61,7 @@ export async function fetchTypeOfProperty({
 }
 
 export function useTypeOfPropertyList(params: Omit<TypeOfPropertyListParams, 'signal'>) {
-  const { page, pageSize, search = '', searchFields, fixedFilters, fixedConds } = params
+  const { page, pageSize, search = '', searchFields, fixedFilters, fixedConds, reloadKey } = params
   const debounced = useDebouncedValue(search, 300)
 
   const [rows, setRows] = React.useState<ApiTypeOfProperty[]>([])
@@ -78,7 +101,8 @@ export function useTypeOfPropertyList(params: Omit<TypeOfPropertyListParams, 'si
     debounced,
     (searchFields ?? []).join('|'),
     JSON.stringify(fixedFilters ?? []),
-    JSON.stringify(fixedConds ?? [])
+    JSON.stringify(fixedConds ?? []),
+    reloadKey
   ])
 
   return { rows, totalCount, loading }

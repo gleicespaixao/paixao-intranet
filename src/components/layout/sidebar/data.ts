@@ -17,7 +17,7 @@ export const sidebarData: NavItem[] = [
     children: [
       { label: 'Projetos', href: '/developments/development' },
       { label: 'Bairros', href: '/developments/neighborhood' },
-      { label: 'Tipos de imóvel', href: '/developments/type-of-property' }
+      { label: 'Tipos de propriedade', href: '/developments/type-of-property' }
     ]
   },
   {

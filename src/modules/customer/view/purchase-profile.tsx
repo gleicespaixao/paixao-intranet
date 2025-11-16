@@ -34,7 +34,7 @@ export const CustomerViewPurchaseProfile = ({ customer }: { customer?: ApiCustom
             </HStack>
           </HStack>
 
-          {/* Tipo de imóvel */}
+          {/* Tipo de propriedade */}
           <HStack align="center" wrap="wrap" gap={2}>
             <BiHome />
             <Text fontWeight="medium" minW="fit-content">

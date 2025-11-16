@@ -7,3 +7,8 @@ export type ApiTypeOfProperty = {
   name: string
   logs: ApiLog
 }
+
+export type ApiTypeOfPropertyCreateUpdate = {
+  status: boolean
+  name: string
+}
