@@ -6,7 +6,6 @@ import { Box, VStack, Text, Icon, Separator, Accordion, Heading, Stack } from '@
 import { usePathname } from 'next/navigation'
 import { Logotipo } from '../../logotipo'
 import { ItemRoot } from './item-root'
-import { BiCog } from 'react-icons/bi'
 import { UserMenu } from './user-menu'
 import { sidebarData } from './data'
 import { ColorModeMenuButton } from './color-mode-menu'
@@ -109,14 +108,14 @@ export function SidebarContent({
       <VStack align="stretch" gap="2">
         <Separator />
         <ColorModeMenuButton />
-        <Separator />
+        {/* <Separator />
         <ItemRoot
           label="Configurações"
           href="/"
           icon={BiCog}
           isActive={isActive('/settings')}
           onClick={withinDrawer ? onNavigate : undefined}
-        />
+        /> */}
         <Separator />
         <UserMenu onClick={withinDrawer ? onNavigate : undefined} />
       </VStack>

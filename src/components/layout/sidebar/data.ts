@@ -1,4 +1,4 @@
-import { BiBuildings, BiCategoryAlt, BiGroup, BiUserVoice } from 'react-icons/bi'
+import { BiBuildings, BiCategoryAlt, BiUserVoice } from 'react-icons/bi'
 import { IconType } from 'react-icons/lib'
 
 type NavItem = {
@@ -19,13 +19,13 @@ export const sidebarData: NavItem[] = [
       { label: 'Bairros', href: '/developments/neighborhood' },
       { label: 'Tipos de propriedade', href: '/developments/type-of-property' }
     ]
-  },
-  {
-    label: 'Equipes',
-    icon: BiGroup,
-    children: [
-      { label: 'Usuários', href: '/teams/user' },
-      { label: 'Perfis', href: '/teams/profile' }
-    ]
   }
+  // {
+  //   label: 'Equipes',
+  //   icon: BiGroup,
+  //   children: [
+  //     { label: 'Usuários', href: '/teams/user' },
+  //     { label: 'Perfis', href: '/teams/profile' }
+  //   ]
+  // }
 ]
