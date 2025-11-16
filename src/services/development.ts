@@ -5,9 +5,9 @@ import { joinFilters, like, cond } from '@/services/_filters'
 import { useDebouncedValue } from '@/services/_search' // seu debounce
 import * as React from 'react'
 import { AxiosRequestConfig } from 'axios'
-import { deleteJson, getJson } from './_request'
-import { ApiDevelopment } from '@/@types/api-development'
-// import { DevelopmentForm } from '@/schemas/purchase-history'
+import { addJson, deleteJson, getJson, updateJson } from './_request'
+import { ApiDevelopment, ApiDevelopmentCreateUpdate } from '@/@types/api-development'
+import { DevelopmentForm } from '@/schemas/development'
 
 export type DevelopmentListParams = {
   page?: number
@@ -20,24 +20,29 @@ export type DevelopmentListParams = {
   reloadKey?: number
 }
 
-// const toApiDevelopmentPayload = (form: DevelopmentForm): ApiDevelopmentCreateUpdate => {
-//   return {
-//   }
-// }
+const toApiDevelopmentPayload = (form: DevelopmentForm): ApiDevelopmentCreateUpdate => {
+  return {
+    status: form.status === 'active' ? true : false,
+    name: form.name,
+    neighborhood: {
+      id: form.neighborhood.value
+    }
+  }
+}
 
 export async function getDevelopmentById(id: string, config?: AxiosRequestConfig) {
   return getJson<ApiDevelopment>(`/Development/${id}`, config)
 }
 
-// export async function addDevelopment(form: DevelopmentForm) {
-//   const payload = toApiDevelopmentPayload(form)
-//   return addJson<ApiDevelopment>('/Development', payload)
-// }
+export async function addDevelopment(form: DevelopmentForm) {
+  const payload = toApiDevelopmentPayload(form)
+  return addJson<ApiDevelopment>('/Development', payload)
+}
 
-// export async function updateDevelopment(id: string, form: DevelopmentForm) {
-//   const payload = toApiDevelopmentPayload(form)
-//   return updateJson<ApiDevelopment>(`/Development/${id}`, payload)
-// }
+export async function updateDevelopment(id: string, form: DevelopmentForm) {
+  const payload = toApiDevelopmentPayload(form)
+  return updateJson<ApiDevelopment>(`/Development/${id}`, payload)
+}
 
 export async function deleteDevelopment(id: string) {
   return deleteJson<ApiDevelopment>(`/Development/${id}`)
