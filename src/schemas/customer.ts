@@ -2,7 +2,7 @@ import { z } from 'zod'
 import { internationalPhoneRegex, isValidCPF } from './utils'
 
 export const apiCustomerStatus = z.enum(['active', 'inactive', 'paused'])
-export const apiCustomerMarital = z.enum(['single', 'married', 'separated', 'widowed', 'other'])
+export const apiCustomerMarital = z.enum(['single', 'married', 'separated', 'divorced', 'widowed', 'other'])
 export const apiPurchaseGoals = z.enum(['none', 'residence', 'investment'])
 export const apiBedrooms = z.enum(['none', 'one', 'two', 'three', 'four_plus'])
 export const apiGarages = z.enum(['none', 'one', 'two', 'three', 'four_plus'])
