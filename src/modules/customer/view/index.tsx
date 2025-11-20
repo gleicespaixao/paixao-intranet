@@ -15,6 +15,7 @@ import { ControlledDeleteButton } from '@/components/dialog/controled/controlled
 import { toaster } from '@/components/ui/toaster'
 import { useRouter } from 'next/router'
 import { deleteCustomer } from '@/services/customer'
+import { CustomerViewDocs } from './docs'
 
 export const ModuleCustomerView = ({
   customer,
@@ -77,7 +78,9 @@ export const ModuleCustomerView = ({
                   <CustomerViewRelationship customer={customer} />
                 </Stack>
               </Tabs.Content>
-              <Tabs.Content value="docs">Manage your projects</Tabs.Content>
+              <Tabs.Content value="docs">
+                <CustomerViewDocs customer={customer} />
+              </Tabs.Content>
             </Tabs.Root>
           </Stack>
         </Stack>
