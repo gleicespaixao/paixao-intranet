@@ -60,7 +60,7 @@ export function DevelopmentDialogForm({ open, onOpenChange, mode, initial, onSuc
 
   React.useEffect(() => {
     reset(toDefaultValues(initial))
-  }, [initial, reset])
+  }, [initial, reset, open])
 
   const onSubmit = async (payload: DevelopmentForm) => {
     let res

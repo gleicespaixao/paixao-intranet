@@ -86,7 +86,7 @@ export function CompanyDrawerForm({ open, onOpenChange, mode, initial, onSuccess
 
   React.useEffect(() => {
     reset(toDefaultValues(initial))
-  }, [initial, reset])
+  }, [initial, reset, open])
 
   const handleSumbit = async (payload: CompanyForm) => {
     let res

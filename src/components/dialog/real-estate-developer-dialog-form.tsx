@@ -48,7 +48,7 @@ export function RealEstateDeveloperDialogForm({ open, onOpenChange, mode, initia
 
   React.useEffect(() => {
     reset(toDefaultValues(initial))
-  }, [initial, reset])
+  }, [initial, reset, open])
 
   const onSubmit = async (payload: RealEstateDeveloperForm) => {
     let res

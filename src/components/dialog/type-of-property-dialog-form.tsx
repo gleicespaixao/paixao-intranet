@@ -44,7 +44,7 @@ export function TypeOfPropertyDialogForm({ open, onOpenChange, mode, initial, on
 
   React.useEffect(() => {
     reset(toDefaultValues(initial))
-  }, [initial, reset])
+  }, [initial, reset, open])
 
   const onSubmit = async (payload: TypeOfPropertyForm) => {
     let res

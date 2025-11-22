@@ -46,7 +46,7 @@ export function NeighborhoodDialogForm({ open, onOpenChange, mode, initial, onSu
 
   React.useEffect(() => {
     reset(toDefaultValues(initial))
-  }, [initial, reset])
+  }, [initial, reset, open])
 
   const onSubmit = async (payload: NeighborhoodForm) => {
     let res
