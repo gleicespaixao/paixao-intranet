@@ -8,33 +8,37 @@ import { DeleteDialog } from './controled'
 import { BiTrashAlt } from 'react-icons/bi'
 import { STATUS_OPTIONS } from '@/utils/status'
 import { ControlledInput } from '../controlled-input/controlled-input'
-import { ApiTypeOfProperty } from '@/@types/api-type-of-property'
-import { schemaTypeOfProperty, TypeOfPropertyForm } from '@/schemas/type-of-property'
-import { addTypeOfProperty, deleteTypeOfProperty, updateTypeOfProperty } from '@/services/type-of-property'
+import { ApiRealEstateDeveloper } from '@/@types/api-real-estate-developer'
+import { schemaRealEstateDeveloper, RealEstateDeveloperForm } from '@/schemas/real-estate-developer'
+import {
+  addRealEstateDeveloper,
+  deleteRealEstateDeveloper,
+  updateRealEstateDeveloper
+} from '@/services/real-estate-developer'
 
 type Props = {
   open: boolean
   onOpenChange: (open: boolean) => void
   mode: 'create' | 'edit'
-  initial?: Partial<ApiTypeOfProperty>
-  onSuccess?: (typeOfProperty: ApiTypeOfProperty) => void
+  initial?: Partial<ApiRealEstateDeveloper>
+  onSuccess?: (realEstateDeveloper: ApiRealEstateDeveloper) => void
 }
 
-const toDefaultValues = (rel?: Partial<ApiTypeOfProperty>): DefaultValues<TypeOfPropertyForm> => {
+const toDefaultValues = (rel?: Partial<ApiRealEstateDeveloper>): DefaultValues<RealEstateDeveloperForm> => {
   return {
     status: rel?.status === false ? 'inactive' : 'active',
     name: rel?.name ?? ''
   }
 }
 
-export function TypeOfPropertyDialogForm({ open, onOpenChange, mode, initial, onSuccess }: Props) {
+export function RealEstateDeveloperDialogForm({ open, onOpenChange, mode, initial, onSuccess }: Props) {
   const {
     control,
     handleSubmit,
     formState: { isSubmitting, errors },
     reset
-  } = useForm<TypeOfPropertyForm>({
-    resolver: zodResolver(schemaTypeOfProperty),
+  } = useForm<RealEstateDeveloperForm>({
+    resolver: zodResolver(schemaRealEstateDeveloper),
     defaultValues: toDefaultValues(initial)
   })
 
@@ -46,13 +50,13 @@ export function TypeOfPropertyDialogForm({ open, onOpenChange, mode, initial, on
     reset(toDefaultValues(initial))
   }, [initial, reset, open])
 
-  const onSubmit = async (payload: TypeOfPropertyForm) => {
+  const onSubmit = async (payload: RealEstateDeveloperForm) => {
     let res
 
     if (mode === 'create') {
-      res = await addTypeOfProperty(payload)
+      res = await addRealEstateDeveloper(payload)
     } else if (mode === 'edit' && initial?.id) {
-      res = await updateTypeOfProperty(initial.id, payload)
+      res = await updateRealEstateDeveloper(initial.id, payload)
     }
 
     if (!res) return
@@ -70,12 +74,12 @@ export function TypeOfPropertyDialogForm({ open, onOpenChange, mode, initial, on
     if (!initial?.id) return
     try {
       setDeleteLoading(true)
-      const res = await deleteTypeOfProperty(initial.id)
+      const res = await deleteRealEstateDeveloper(initial.id)
 
       if (!res.success) return
 
       if (onSuccess) {
-        onSuccess(initial as ApiTypeOfProperty)
+        onSuccess(initial as ApiRealEstateDeveloper)
       }
 
       // fecha ambos
@@ -93,7 +97,7 @@ export function TypeOfPropertyDialogForm({ open, onOpenChange, mode, initial, on
         <Dialog.Positioner>
           <Dialog.Content>
             <Dialog.Header>
-              <Dialog.Title>{mode === 'create' ? 'Novo' : 'Editar'} tipo de propriedade</Dialog.Title>
+              <Dialog.Title>{mode === 'create' ? 'Nova' : 'Editar'} incorporadora</Dialog.Title>
               <Dialog.CloseTrigger />
             </Dialog.Header>
 
@@ -116,7 +120,7 @@ export function TypeOfPropertyDialogForm({ open, onOpenChange, mode, initial, on
             <Dialog.Footer justifyContent={mode !== 'create' ? 'space-between' : 'end'}>
               {mode !== 'create' && (
                 <IconButton
-                  aria-label="Excluir tipo de propriedade"
+                  aria-label="Excluir incorporadora"
                   colorPalette="red"
                   variant="subtle"
                   onClick={() => setDeleteOpen(true)}
@@ -125,7 +129,7 @@ export function TypeOfPropertyDialogForm({ open, onOpenChange, mode, initial, on
                 </IconButton>
               )}
               <Button type="submit" form="typo-of-property-form" loading={isSubmitting}>
-                {mode === 'create' ? 'Salvar' : 'Atualizar'} tipo de propriedade
+                {mode === 'create' ? 'Salvar' : 'Atualizar'} incorporadora
               </Button>
             </Dialog.Footer>
 
@@ -140,7 +144,7 @@ export function TypeOfPropertyDialogForm({ open, onOpenChange, mode, initial, on
           open={deleteOpen}
           onOpenChange={setDeleteOpen}
           loading={deleteLoading}
-          entity="tipo de propriedade"
+          entity="incorporadora"
           itemName={initial?.name}
           onConfirm={handleConfirmDelete}
         />

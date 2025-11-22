@@ -5,7 +5,7 @@ export type ApiDevelopment = {
   token: number
   name: string
   neighborhood: ApiItemLinks
-  realEstateDeveloper: string
+  realEstateDeveloper: ApiItemLinks[]
   status: boolean
   logs: ApiLog
 }
@@ -14,5 +14,5 @@ export type ApiDevelopmentCreateUpdate = {
   name: string
   status: boolean
   neighborhood: { id: string }
-  realEstateDeveloper: string
+  realEstateDeveloper: { id: string }[]
 }

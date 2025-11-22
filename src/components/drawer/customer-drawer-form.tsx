@@ -139,7 +139,7 @@ export function CustomerDrawerForm({ open, onOpenChange, mode, initial, onSucces
 
   React.useEffect(() => {
     reset(toDefaultValues(initial))
-  }, [initial, reset])
+  }, [initial, reset, open])
 
   const handleSumbit = async (payload: CustomerForm) => {
     let res

@@ -6,22 +6,15 @@ import { Badge, Card, HStack, IconButton } from '@chakra-ui/react'
 import { ColumnDef, ListingTable } from '@/components/listing-table'
 import { Tooltip } from '@/components/ui/tooltip'
 import { BiPencil } from 'react-icons/bi'
+import { ApiRealEstateDeveloper } from '@/@types/api-real-estate-developer'
+import { useRealEstateDeveloperList } from '@/services/real-estate-developer'
+import { RealEstateDeveloperDialogForm } from '@/components/dialog/real-estate-developer-dialog-form'
 import { getStatusMeta } from '@/utils/status'
-import { ApiDevelopment } from '@/@types/api-development'
-import { useDevelopmentList } from '@/services/development'
-import { DevelopmentDialogForm } from '@/components/dialog/development-dialog-form'
 
-type Row = {
-  id: string
-  token: number
-  name: string
-  neighborhood: string
-  realEstateDeveloper: string[]
-  status: boolean
-}
+type Row = { id: string; token: number; name: string; status: boolean }
 
-export const ModuleDevelopment = ({ title }: { title: string }) => {
-  const entity = 'projeto'
+export const ModuleRealEstateDeveloper = ({ title }: { title: string }) => {
+  const entity = 'incorporadora'
 
   const [page, setPage] = React.useState(1)
   const [pageSize, setPageSize] = React.useState(25)
@@ -32,30 +25,30 @@ export const ModuleDevelopment = ({ title }: { title: string }) => {
 
   // 👇 ESTADO PARA O DIALOG
   const [open, setOpen] = React.useState(false)
-  const [selectedDevelopment, setSelectedDevelopment] = React.useState<ApiDevelopment | undefined>(undefined)
+  const [selectedRealEstateDeveloper, setSelectedRealEstateDeveloper] = React.useState<
+    ApiRealEstateDeveloper | undefined
+  >(undefined)
 
   const {
     rows: apiRows,
     totalCount,
     loading
-  } = useDevelopmentList({
+  } = useRealEstateDeveloperList({
     page,
     pageSize,
     search,
-    searchFields: ['name', 'neighborhood.name', 'realEstateDeveloper.name'],
+    searchFields: ['name'],
     reloadKey
   })
 
   // mapeia para o shape da tabela
   const rows: Row[] = React.useMemo(
     () =>
-      apiRows.map((r: ApiDevelopment) => ({
+      apiRows.map((r: ApiRealEstateDeveloper) => ({
         id: r.id,
         token: r.token,
         name: r.name ?? '',
-        status: r.status,
-        neighborhood: r.neighborhood.name,
-        realEstateDeveloper: r.realEstateDeveloper?.map((d) => d.name ?? '').filter(Boolean) ?? []
+        status: r.status
       })),
     [apiRows]
   )
@@ -64,20 +57,6 @@ export const ModuleDevelopment = ({ title }: { title: string }) => {
     () => [
       { header: 'ID', accessorKey: 'token' },
       { header: 'Nome', accessorKey: 'name' },
-      { header: 'Bairro', accessorKey: 'neighborhood' },
-      {
-        id: 'realEstateDeveloper',
-        header: 'Incorporadora',
-        cell: (row) => (
-          <HStack gap={1} wrap="wrap">
-            {row.realEstateDeveloper.map((name) => (
-              <Badge key={name} variant="subtle">
-                {name}
-              </Badge>
-            ))}
-          </HStack>
-        )
-      },
       {
         id: 'status',
         header: 'Status',
@@ -101,7 +80,7 @@ export const ModuleDevelopment = ({ title }: { title: string }) => {
                   const rel = apiRows.find((r) => r.id === row.id)
 
                   if (rel) {
-                    setSelectedDevelopment(rel)
+                    setSelectedRealEstateDeveloper(rel)
                     setOpen(true)
                   }
                 }}
@@ -123,7 +102,7 @@ export const ModuleDevelopment = ({ title }: { title: string }) => {
 
   return (
     <>
-      <PageHeader title={title} subtitle="Listagem de projetos registrados" backButton />
+      <PageHeader title={title} subtitle="Listagem de incorporadoras registradas" backButton />
 
       <Card.Root>
         <Card.Body p={0}>
@@ -146,17 +125,19 @@ export const ModuleDevelopment = ({ title }: { title: string }) => {
             defaultPageSize={pageSize}
             loading={loading}
             includeOnClick={() => {
-              setSelectedDevelopment(undefined)
+              setSelectedRealEstateDeveloper(undefined)
               setOpen(true)
             }}
+            male={false}
           />
         </Card.Body>
       </Card.Root>
-      <DevelopmentDialogForm
+      {/* Drawer de cliente (modo create) */}
+      <RealEstateDeveloperDialogForm
         open={open}
         onOpenChange={setOpen}
-        mode={selectedDevelopment ? 'edit' : 'create'}
-        initial={selectedDevelopment}
+        mode={selectedRealEstateDeveloper ? 'edit' : 'create'}
+        initial={selectedRealEstateDeveloper}
         onSuccess={async () => {
           setReloadKey((k) => k + 1)
           setOpen(false)

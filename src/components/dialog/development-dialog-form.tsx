@@ -13,6 +13,7 @@ import { addDevelopment, deleteDevelopment, updateDevelopment } from '@/services
 import { DevelopmentForm, schemaDevelopment } from '@/schemas/development'
 import { ControlledSelectAsync } from '../controlled-select/controlled-select-async'
 import { fetchNeighborhood } from '@/services/neighborhood'
+import { fetchRealEstateDeveloper } from '@/services/real-estate-developer'
 
 type Props = {
   open: boolean
@@ -28,11 +29,17 @@ const toDefaultValues = (rel?: Partial<ApiDevelopment>): DefaultValues<Developme
     name: rel?.name ?? '',
     neighborhood: rel?.neighborhood
       ? {
-          value: rel?.neighborhood.id,
-          label: rel?.neighborhood.name
+          value: rel.neighborhood.id,
+          label: rel.neighborhood.name
         }
       : { value: '', label: '' },
-    realEstateDeveloper: rel?.realEstateDeveloper ?? ''
+    realEstateDeveloper:
+      rel?.realEstateDeveloper && rel.realEstateDeveloper.length > 0
+        ? rel.realEstateDeveloper.map((real) => ({
+            value: real.id,
+            label: real.name
+          }))
+        : []
   }
 }
 
@@ -53,7 +60,7 @@ export function DevelopmentDialogForm({ open, onOpenChange, mode, initial, onSuc
 
   React.useEffect(() => {
     reset(toDefaultValues(initial))
-  }, [initial, reset])
+  }, [initial, reset, open])
 
   const onSubmit = async (payload: DevelopmentForm) => {
     let res
@@ -146,12 +153,24 @@ export function DevelopmentDialogForm({ open, onOpenChange, mode, initial, onSuc
                       return []
                     }}
                   />
-                  <ControlledInput
-                    required
+                  <ControlledSelectAsync
+                    label="Incorporadora"
                     name="realEstateDeveloper"
                     control={control}
-                    label="Incorporadora"
+                    required
+                    multiple
                     error={errors.realEstateDeveloper?.message}
+                    loadOptions={async () => {
+                      const res = await fetchRealEstateDeveloper({})
+                      if (res.success && res.data) {
+                        return res.data.records.map((c) => ({
+                          label: c.name,
+                          value: c.id,
+                          isDisabled: !c.status
+                        }))
+                      }
+                      return []
+                    }}
                   />
                 </Grid>
               </Form>

@@ -7,6 +7,13 @@ export const schemaDevelopment = z.object({
     value: z.string(),
     label: z.string().min(1, 'Informe o bairro do projeto')
   }),
-  realEstateDeveloper: z.string().min(2, 'Informe a Incorporadora')
+  realEstateDeveloper: z
+    .array(
+      z.object({
+        value: z.string().min(1, 'Informe uma incorporadora'),
+        label: z.string()
+      })
+    )
+    .min(1, 'Informe pelo menos uma incorporadora')
 })
 export type DevelopmentForm = z.infer<typeof schemaDevelopment>
