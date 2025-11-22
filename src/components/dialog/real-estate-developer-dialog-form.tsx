@@ -8,49 +8,37 @@ import { DeleteDialog } from './controled'
 import { BiTrashAlt } from 'react-icons/bi'
 import { STATUS_OPTIONS } from '@/utils/status'
 import { ControlledInput } from '../controlled-input/controlled-input'
-import { ApiDevelopment } from '@/@types/api-development'
-import { addDevelopment, deleteDevelopment, updateDevelopment } from '@/services/development'
-import { DevelopmentForm, schemaDevelopment } from '@/schemas/development'
-import { ControlledSelectAsync } from '../controlled-select/controlled-select-async'
-import { fetchNeighborhood } from '@/services/neighborhood'
-import { fetchRealEstateDeveloper } from '@/services/real-estate-developer'
+import { ApiRealEstateDeveloper } from '@/@types/api-real-estate-developer'
+import { schemaRealEstateDeveloper, RealEstateDeveloperForm } from '@/schemas/real-estate-developer'
+import {
+  addRealEstateDeveloper,
+  deleteRealEstateDeveloper,
+  updateRealEstateDeveloper
+} from '@/services/real-estate-developer'
 
 type Props = {
   open: boolean
   onOpenChange: (open: boolean) => void
   mode: 'create' | 'edit'
-  initial?: Partial<ApiDevelopment>
-  onSuccess?: (typeOfProperty: ApiDevelopment) => void
+  initial?: Partial<ApiRealEstateDeveloper>
+  onSuccess?: (realEstateDeveloper: ApiRealEstateDeveloper) => void
 }
 
-const toDefaultValues = (rel?: Partial<ApiDevelopment>): DefaultValues<DevelopmentForm> => {
+const toDefaultValues = (rel?: Partial<ApiRealEstateDeveloper>): DefaultValues<RealEstateDeveloperForm> => {
   return {
     status: rel?.status === false ? 'inactive' : 'active',
-    name: rel?.name ?? '',
-    neighborhood: rel?.neighborhood
-      ? {
-          value: rel.neighborhood.id,
-          label: rel.neighborhood.name
-        }
-      : { value: '', label: '' },
-    realEstateDeveloper:
-      rel?.realEstateDeveloper && rel.realEstateDeveloper.length > 0
-        ? rel.realEstateDeveloper.map((real) => ({
-            value: real.id,
-            label: real.name
-          }))
-        : []
+    name: rel?.name ?? ''
   }
 }
 
-export function DevelopmentDialogForm({ open, onOpenChange, mode, initial, onSuccess }: Props) {
+export function RealEstateDeveloperDialogForm({ open, onOpenChange, mode, initial, onSuccess }: Props) {
   const {
     control,
     handleSubmit,
     formState: { isSubmitting, errors },
     reset
-  } = useForm<DevelopmentForm>({
-    resolver: zodResolver(schemaDevelopment),
+  } = useForm<RealEstateDeveloperForm>({
+    resolver: zodResolver(schemaRealEstateDeveloper),
     defaultValues: toDefaultValues(initial)
   })
 
@@ -62,13 +50,13 @@ export function DevelopmentDialogForm({ open, onOpenChange, mode, initial, onSuc
     reset(toDefaultValues(initial))
   }, [initial, reset])
 
-  const onSubmit = async (payload: DevelopmentForm) => {
+  const onSubmit = async (payload: RealEstateDeveloperForm) => {
     let res
 
     if (mode === 'create') {
-      res = await addDevelopment(payload)
+      res = await addRealEstateDeveloper(payload)
     } else if (mode === 'edit' && initial?.id) {
-      res = await updateDevelopment(initial.id, payload)
+      res = await updateRealEstateDeveloper(initial.id, payload)
     }
 
     if (!res) return
@@ -86,12 +74,12 @@ export function DevelopmentDialogForm({ open, onOpenChange, mode, initial, onSuc
     if (!initial?.id) return
     try {
       setDeleteLoading(true)
-      const res = await deleteDevelopment(initial.id)
+      const res = await deleteRealEstateDeveloper(initial.id)
 
       if (!res.success) return
 
       if (onSuccess) {
-        onSuccess(initial as ApiDevelopment)
+        onSuccess(initial as ApiRealEstateDeveloper)
       }
 
       // fecha ambos
@@ -109,7 +97,7 @@ export function DevelopmentDialogForm({ open, onOpenChange, mode, initial, onSuc
         <Dialog.Positioner>
           <Dialog.Content>
             <Dialog.Header>
-              <Dialog.Title>{mode === 'create' ? 'Novo' : 'Editar'} projeto</Dialog.Title>
+              <Dialog.Title>{mode === 'create' ? 'Nova' : 'Editar'} incorporadora</Dialog.Title>
               <Dialog.CloseTrigger />
             </Dialog.Header>
 
@@ -125,60 +113,14 @@ export function DevelopmentDialogForm({ open, onOpenChange, mode, initial, onSuc
                   />
                 </Grid>
                 <GridItem colSpan={{ base: 1, md: 2 }}>
-                  <ControlledInput
-                    required
-                    name="name"
-                    control={control}
-                    label="Nome do projeto"
-                    error={errors.name?.message}
-                  />
+                  <ControlledInput required name="name" control={control} label="Nome" error={errors.name?.message} />
                 </GridItem>
-
-                <Grid templateColumns={{ base: '1fr', md: '1fr 1fr' }} gap={4}>
-                  <ControlledSelectAsync
-                    label="Bairro"
-                    name="neighborhood"
-                    control={control}
-                    required
-                    error={errors.neighborhood?.value?.message}
-                    loadOptions={async () => {
-                      const res = await fetchNeighborhood({})
-                      if (res.success && res.data) {
-                        return res.data.records.map((c) => ({
-                          label: c.name,
-                          value: c.id,
-                          isDisabled: !c.status
-                        }))
-                      }
-                      return []
-                    }}
-                  />
-                  <ControlledSelectAsync
-                    label="Incorporadora"
-                    name="realEstateDeveloper"
-                    control={control}
-                    required
-                    multiple
-                    error={errors.realEstateDeveloper?.message}
-                    loadOptions={async () => {
-                      const res = await fetchRealEstateDeveloper({})
-                      if (res.success && res.data) {
-                        return res.data.records.map((c) => ({
-                          label: c.name,
-                          value: c.id,
-                          isDisabled: !c.status
-                        }))
-                      }
-                      return []
-                    }}
-                  />
-                </Grid>
               </Form>
             </Dialog.Body>
             <Dialog.Footer justifyContent={mode !== 'create' ? 'space-between' : 'end'}>
               {mode !== 'create' && (
                 <IconButton
-                  aria-label="Excluir bairro"
+                  aria-label="Excluir incorporadora"
                   colorPalette="red"
                   variant="subtle"
                   onClick={() => setDeleteOpen(true)}
@@ -187,7 +129,7 @@ export function DevelopmentDialogForm({ open, onOpenChange, mode, initial, onSuc
                 </IconButton>
               )}
               <Button type="submit" form="typo-of-property-form" loading={isSubmitting}>
-                {mode === 'create' ? 'Salvar' : 'Atualizar'} projeto
+                {mode === 'create' ? 'Salvar' : 'Atualizar'} incorporadora
               </Button>
             </Dialog.Footer>
 
@@ -202,7 +144,7 @@ export function DevelopmentDialogForm({ open, onOpenChange, mode, initial, onSuc
           open={deleteOpen}
           onOpenChange={setDeleteOpen}
           loading={deleteLoading}
-          entity="projeto"
+          entity="incorporadora"
           itemName={initial?.name}
           onConfirm={handleConfirmDelete}
         />
