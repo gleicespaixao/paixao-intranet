@@ -11,7 +11,14 @@ import { ApiDevelopment } from '@/@types/api-development'
 import { useDevelopmentList } from '@/services/development'
 import { DevelopmentDialogForm } from '@/components/dialog/development-dialog-form'
 
-type Row = { id: string; token: number; name: string; neighborhood: string; status: boolean }
+type Row = {
+  id: string
+  token: number
+  name: string
+  neighborhood: string
+  realEstateDeveloper: string
+  status: boolean
+}
 
 export const ModuleDevelopment = ({ title }: { title: string }) => {
   const entity = 'projeto'
@@ -35,7 +42,7 @@ export const ModuleDevelopment = ({ title }: { title: string }) => {
     page,
     pageSize,
     search,
-    searchFields: ['name'],
+    searchFields: ['name', 'neighborhood.name', 'realEstateDeveloper'],
     reloadKey
   })
 
@@ -47,7 +54,8 @@ export const ModuleDevelopment = ({ title }: { title: string }) => {
         token: r.token,
         name: r.name ?? '',
         status: r.status,
-        neighborhood: r.neighborhood.name
+        neighborhood: r.neighborhood.name,
+        realEstateDeveloper: r.realEstateDeveloper
       })),
     [apiRows]
   )
@@ -57,6 +65,7 @@ export const ModuleDevelopment = ({ title }: { title: string }) => {
       { header: 'ID', accessorKey: 'token' },
       { header: 'Nome', accessorKey: 'name' },
       { header: 'Bairro', accessorKey: 'neighborhood' },
+      { header: 'Incorporadora', accessorKey: 'realEstateDeveloper' },
       {
         id: 'status',
         header: 'Status',
