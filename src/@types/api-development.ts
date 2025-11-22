@@ -5,6 +5,7 @@ export type ApiDevelopment = {
   token: number
   name: string
   neighborhood: ApiItemLinks
+  realEstateDeveloper: string
   status: boolean
   logs: ApiLog
 }
