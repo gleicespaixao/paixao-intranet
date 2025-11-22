@@ -14,4 +14,5 @@ export type ApiDevelopmentCreateUpdate = {
   name: string
   status: boolean
   neighborhood: { id: string }
+  realEstateDeveloper: string
 }

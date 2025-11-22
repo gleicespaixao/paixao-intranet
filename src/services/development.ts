@@ -26,7 +26,8 @@ const toApiDevelopmentPayload = (form: DevelopmentForm): ApiDevelopmentCreateUpd
     name: form.name,
     neighborhood: {
       id: form.neighborhood.value
-    }
+    },
+    realEstateDeveloper: form.realEstateDeveloper
   }
 }
 
