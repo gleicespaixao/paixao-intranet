@@ -35,7 +35,7 @@ export const ModuleDevelopment = ({ title }: { title: string }) => {
     page,
     pageSize,
     search,
-    searchFields: ['name'],
+    searchFields: ['name', 'neighborhood.name'],
     reloadKey
   })
 
