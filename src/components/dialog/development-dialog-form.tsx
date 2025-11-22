@@ -31,7 +31,8 @@ const toDefaultValues = (rel?: Partial<ApiDevelopment>): DefaultValues<Developme
           value: rel?.neighborhood.id,
           label: rel?.neighborhood.name
         }
-      : { value: '', label: '' }
+      : { value: '', label: '' },
+    realEstateDeveloper: rel?.realEstateDeveloper ?? ''
   }
 }
 
@@ -144,6 +145,13 @@ export function DevelopmentDialogForm({ open, onOpenChange, mode, initial, onSuc
                       }
                       return []
                     }}
+                  />
+                  <ControlledInput
+                    required
+                    name="realEstateDeveloper"
+                    control={control}
+                    label="Incorporadora"
+                    error={errors.realEstateDeveloper?.message}
                   />
                 </Grid>
               </Form>
