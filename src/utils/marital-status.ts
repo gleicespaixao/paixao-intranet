@@ -6,7 +6,7 @@ const MARITAL_STATUS_MAP: Record<MaritalStatus, Meta> = {
   single: { label: 'Solteiro', colorPalette: 'green' },
   married: { label: 'Casado', colorPalette: 'blue' },
   separated: { label: 'Separado', colorPalette: 'orange' },
-  divorced: { label: 'Separado', colorPalette: 'pink' },
+  divorced: { label: 'Divorciado', colorPalette: 'pink' },
   widowed: { label: 'Viúvo', colorPalette: 'purple' },
   other: { label: 'Outro', colorPalette: 'gray' }
 } as const
