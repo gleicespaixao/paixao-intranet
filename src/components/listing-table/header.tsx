@@ -33,6 +33,7 @@ export type ListingTableHeaderProps = {
   includeHref?: string
   includeLabel?: string
   includeOnClick?: () => void
+  male?: boolean
 }
 
 export const ListingTableHeader = ({
@@ -47,7 +48,8 @@ export const ListingTableHeader = ({
   loading = false,
   includeHref,
   includeLabel,
-  includeOnClick
+  includeOnClick,
+  male
 }: ListingTableHeaderProps) => {
   const sizeCollection = React.useMemo(
     () => createListCollection({ items: pageSizeOptions.map((n) => ({ label: String(n), value: String(n) })) }),
@@ -74,6 +76,7 @@ export const ListingTableHeader = ({
               includeHref={includeHref}
               includeLabel={includeLabel}
               includeOnClick={includeOnClick}
+              male={male}
             />
           </HStack>
         )}
@@ -174,6 +177,7 @@ export const ListingTableHeader = ({
                   includeHref={includeHref}
                   includeLabel={includeLabel}
                   includeOnClick={includeOnClick}
+                  male={male}
                 />
               </HStack>
             </HStack>
@@ -214,17 +218,19 @@ const ListingTableHeaderAddButton = ({
   entity,
   includeHref,
   includeLabel,
-  includeOnClick
+  includeOnClick,
+  male = true
 }: {
   simple?: boolean
   entity: string
   includeHref?: string
   includeLabel?: string
   includeOnClick?: () => void
+  male?: boolean
 }) => {
   if (!includeHref && !includeOnClick) return null
 
-  const label = includeLabel ?? `Novo ${entity}`
+  const label = (includeLabel ?? male) ? `Novo ${entity}` : `Nova ${entity}`
 
   if (includeOnClick) {
     return !simple ? (

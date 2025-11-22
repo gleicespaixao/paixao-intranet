@@ -10,7 +10,14 @@ type NavItem = {
 
 export const sidebarData: NavItem[] = [
   { label: 'Dashboard', href: '/dashboard', icon: BiCategoryAlt },
-  { label: 'Clientes', href: '/customer', icon: BiUserVoice },
+  {
+    label: 'Clientes',
+    icon: BiUserVoice,
+    children: [
+      { label: 'Pessoas', href: '/customer/customer' },
+      { label: 'Empresas', href: '/customer/company' }
+    ]
+  },
   {
     label: 'Empreendimentos',
     icon: BiBuildings,

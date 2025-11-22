@@ -14,7 +14,7 @@ import { DevelopmentDialogForm } from '@/components/dialog/development-dialog-fo
 type Row = { id: string; token: number; name: string; neighborhood: string; status: boolean }
 
 export const ModuleDevelopment = ({ title }: { title: string }) => {
-  const entity = 'projetos'
+  const entity = 'projeto'
 
   const [page, setPage] = React.useState(1)
   const [pageSize, setPageSize] = React.useState(25)
