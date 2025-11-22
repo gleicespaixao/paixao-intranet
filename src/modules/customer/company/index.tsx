@@ -2,19 +2,19 @@
 
 import * as React from 'react'
 import { PageHeader } from '@/components/layout/page-header'
-import { Badge, Card, HStack, IconButton } from '@chakra-ui/react'
+import { Card, HStack, IconButton } from '@chakra-ui/react'
 import { ColumnDef, ListingTable } from '@/components/listing-table'
 import { Tooltip } from '@/components/ui/tooltip'
 import { BiPencil } from 'react-icons/bi'
-import { getStatusMeta } from '@/utils/status'
-import { ApiNeighborhood } from '@/@types/api-neighborhood'
-import { useNeighborhoodList } from '@/services/neighborhood'
-import { NeighborhoodDialogForm } from '@/components/dialog/neighborhood-dialog-form'
+import type { ApiCompany } from '@/@types/api-company'
+import { useCompanyList } from '@/services/company'
+import { CompanyDrawerForm } from '@/components/drawer/company-drawer-form'
+import { formatPhoneForList } from '@/utils/phone-ddi-config'
 
-type Row = { id: string; token: number; name: string; city: string; state: string; status: boolean }
+type Row = { id: string; name: string; phone: string; email: string }
 
-export const ModuleNeighborhood = ({ title }: { title: string }) => {
-  const entity = 'bairro'
+export const ModuleCompany = ({ title }: { title: string }) => {
+  const entity = 'empresa'
 
   const [page, setPage] = React.useState(1)
   const [pageSize, setPageSize] = React.useState(25)
@@ -23,67 +23,56 @@ export const ModuleNeighborhood = ({ title }: { title: string }) => {
   // 👇 chave para forçar reload da lista
   const [reloadKey, setReloadKey] = React.useState(0)
 
-  // 👇 ESTADO PARA O DIALOG
-  const [open, setOpen] = React.useState(false)
-  const [selectedNeighborhood, setSelectedNeighborhood] = React.useState<ApiNeighborhood | undefined>(undefined)
+  // 👇 controle do drawer
+  const [drawerOpen, setDrawerOpen] = React.useState(false)
+  const [selectedCompany, setSelectedCompany] = React.useState<ApiCompany | undefined>(undefined)
 
   const {
     rows: apiRows,
     totalCount,
     loading
-  } = useNeighborhoodList({
+  } = useCompanyList({
     page,
     pageSize,
     search,
-    searchFields: ['name', 'city', 'state'],
+    searchFields: ['name', 'email', 'phone'],
     reloadKey
   })
 
-  // mapeia para o shape da tabela
+  // mapeia para o shape da tabela (deixa o estado fora; só deriva)
   const rows: Row[] = React.useMemo(
     () =>
-      apiRows.map((r: ApiNeighborhood) => ({
+      apiRows.map((r: ApiCompany) => ({
         id: r.id,
-        token: r.token,
         name: r.name ?? '',
-        city: r.city ?? '',
-        state: r.state ?? '',
-        status: r.status
+        phone: r.phone ?? '',
+        email: r.email ?? ''
       })),
     [apiRows]
   )
 
   const columns = React.useMemo<ColumnDef<Row>[]>(
     () => [
-      { header: 'ID', accessorKey: 'token' },
       { header: 'Nome', accessorKey: 'name' },
-      { header: 'Cidade', accessorKey: 'city' },
-      { header: 'Estado', accessorKey: 'state' },
-      {
-        id: 'status',
-        header: 'Status',
-        cell: (r) => {
-          const { label, colorPalette } = getStatusMeta(r.status)
-          return <Badge colorPalette={colorPalette}>{label}</Badge>
-        }
-      },
+      { header: 'Telefone', accessorKey: 'phone', cell: (r) => formatPhoneForList(String(r.phone ?? ''), true) },
+      { header: 'E-mail', accessorKey: 'email' },
       {
         id: 'actions',
         header: 'Ações',
         align: 'right',
-        cell: (row) => (
+        cell: () => (
           <HStack gap={2} justify="flex-end">
-            <Tooltip content="Editar" openDelay={300}>
+            <Tooltip content="Visualizar" openDelay={300}>
               <IconButton
-                aria-label="Editar"
+                aria-label="Visualizar"
                 size="sm"
                 variant="subtle"
                 onClick={() => {
-                  const rel = apiRows.find((r) => r.id === row.id)
+                  const rel = apiRows.find((r) => r.id === r.id)
 
                   if (rel) {
-                    setSelectedNeighborhood(rel)
-                    setOpen(true)
+                    setSelectedCompany(rel)
+                    setDrawerOpen(true)
                   }
                 }}
               >
@@ -104,7 +93,7 @@ export const ModuleNeighborhood = ({ title }: { title: string }) => {
 
   return (
     <>
-      <PageHeader title={title} subtitle="Listagem de bairros registrados" backButton />
+      <PageHeader title={title} subtitle="Listagem de empresas registrados" backButton />
 
       <Card.Root>
         <Card.Body p={0}>
@@ -127,20 +116,21 @@ export const ModuleNeighborhood = ({ title }: { title: string }) => {
             defaultPageSize={pageSize}
             loading={loading}
             includeOnClick={() => {
-              setSelectedNeighborhood(undefined)
-              setOpen(true)
+              setDrawerOpen(true)
             }}
+            male={false}
           />
         </Card.Body>
       </Card.Root>
-      <NeighborhoodDialogForm
-        open={open}
-        onOpenChange={setOpen}
-        mode={selectedNeighborhood ? 'edit' : 'create'}
-        initial={selectedNeighborhood}
-        onSuccess={async () => {
+      {/* Drawer de empresa (modo create) */}
+      <CompanyDrawerForm
+        open={drawerOpen}
+        onOpenChange={setDrawerOpen}
+        mode={selectedCompany ? 'edit' : 'create'}
+        initial={selectedCompany}
+        onSuccess={() => {
+          // 👉 depois de salvar, recarrega a lista
           setReloadKey((k) => k + 1)
-          setOpen(false)
         }}
       />
     </>

@@ -1,7 +1,7 @@
 import { withAuthGSSP } from '@/server/auth-ssr'
 import type { NextPageWithLayout } from '@/@types/next-page-with-layout'
 import { AppLayout } from '@/components/layout/app-layout'
-import { ModuleCustomerView } from '@/modules/customer/view'
+import { ModuleCustomerView } from '@/modules/customer/customer/view'
 import { useRouter } from 'next/router'
 import * as React from 'react'
 import type { ApiCustomer } from '@/@types/api-customer'

@@ -2,10 +2,10 @@ import { withAuthGSSP } from '@/server/auth-ssr'
 import type { NextPageWithLayout } from '@/@types/next-page-with-layout'
 import { AppLayout } from '@/components/layout/app-layout'
 
-import { ModuleCustomer } from '@/modules/customer'
+import { ModuleCustomer } from '@/modules/customer/customer'
 
 export const getServerSideProps = withAuthGSSP()
-const title = 'Clientes'
+const title = 'Pessoas'
 
 const ProfilePage: NextPageWithLayout = () => {
   return <ModuleCustomer title={title} />
