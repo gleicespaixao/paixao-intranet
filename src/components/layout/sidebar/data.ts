@@ -25,7 +25,8 @@ export const sidebarData: NavItem[] = [
       { label: 'Projetos', href: '/developments/development' },
       { label: 'Bairros', href: '/developments/neighborhood' },
       { label: 'Tipos de propriedade', href: '/developments/type-of-property' },
-      { label: 'Incorporadoras', href: '/developments/real-estate-developer' }
+      { label: 'Incorporadoras', href: '/developments/real-estate-developer' },
+      { label: 'Lazeres', href: '/developments/leisure' }
     ]
   }
   // {
