@@ -18,6 +18,7 @@ export type ControlledInputNumberProps<TFieldValues extends FieldValues> = PassT
   w?: string | number
   isPercent?: boolean
   disabled?: boolean
+  controlChevron?: boolean
 }
 
 export function ControlledInputNumber<TFieldValues extends FieldValues>({
@@ -33,6 +34,7 @@ export function ControlledInputNumber<TFieldValues extends FieldValues>({
   w,
   isPercent = false,
   disabled,
+  controlChevron = false,
   ...rest
 }: ControlledInputNumberProps<TFieldValues>) {
   return (
@@ -85,6 +87,8 @@ export function ControlledInputNumber<TFieldValues extends FieldValues>({
                   }
                 }}
               >
+                {controlChevron && <NumberInput.Control />}
+
                 <NumberInput.Input
                   ref={field.ref}
                   name={field.name}
