@@ -9,7 +9,7 @@ import { BiPencil } from 'react-icons/bi'
 import { getStatusMeta } from '@/utils/status'
 import { ApiDevelopment } from '@/@types/api-development'
 import { useDevelopmentList } from '@/services/development'
-import { DevelopmentDialogForm } from '@/components/dialog/development-dialog-form'
+import NextLink from 'next/link'
 
 type Row = {
   id: string
@@ -27,13 +27,6 @@ export const ModuleDevelopment = ({ title }: { title: string }) => {
   const [pageSize, setPageSize] = React.useState(25)
   const [search, setSearch] = React.useState('')
 
-  // 👇 chave para forçar reload da lista
-  const [reloadKey, setReloadKey] = React.useState(0)
-
-  // 👇 ESTADO PARA O DIALOG
-  const [open, setOpen] = React.useState(false)
-  const [selectedDevelopment, setSelectedDevelopment] = React.useState<ApiDevelopment | undefined>(undefined)
-
   const {
     rows: apiRows,
     totalCount,
@@ -42,8 +35,7 @@ export const ModuleDevelopment = ({ title }: { title: string }) => {
     page,
     pageSize,
     search,
-    searchFields: ['name', 'neighborhood.name', 'realEstateDeveloper.name'],
-    reloadKey
+    searchFields: ['name', 'neighborhood.name', 'realEstateDeveloper.name']
   })
 
   // mapeia para o shape da tabela
@@ -54,7 +46,7 @@ export const ModuleDevelopment = ({ title }: { title: string }) => {
         token: r.token,
         name: r.name ?? '',
         status: r.status,
-        neighborhood: r.neighborhood.name,
+        neighborhood: r.address?.neighborhood ?? '',
         realEstateDeveloper: r.realEstateDeveloper?.map((d) => d.name ?? '').filter(Boolean) ?? []
       })),
     [apiRows]
@@ -93,27 +85,17 @@ export const ModuleDevelopment = ({ title }: { title: string }) => {
         cell: (row) => (
           <HStack gap={2} justify="flex-end">
             <Tooltip content="Editar" openDelay={300}>
-              <IconButton
-                aria-label="Editar"
-                size="sm"
-                variant="subtle"
-                onClick={() => {
-                  const rel = apiRows.find((r) => r.id === row.id)
-
-                  if (rel) {
-                    setSelectedDevelopment(rel)
-                    setOpen(true)
-                  }
-                }}
-              >
-                <BiPencil />
-              </IconButton>
+              <NextLink href={`development/edit/${row.id}`}>
+                <IconButton aria-label="Editar" size="sm" variant="subtle">
+                  <BiPencil />
+                </IconButton>
+              </NextLink>
             </Tooltip>
           </HStack>
         )
       }
     ],
-    [apiRows]
+    []
   )
 
   // resetar para página 1 quando o termo de busca mudar
@@ -145,23 +127,10 @@ export const ModuleDevelopment = ({ title }: { title: string }) => {
             pageSizeOptions={[10, 25, 50, 100]}
             defaultPageSize={pageSize}
             loading={loading}
-            includeOnClick={() => {
-              setSelectedDevelopment(undefined)
-              setOpen(true)
-            }}
+            includeHref="development/new"
           />
         </Card.Body>
       </Card.Root>
-      <DevelopmentDialogForm
-        open={open}
-        onOpenChange={setOpen}
-        mode={selectedDevelopment ? 'edit' : 'create'}
-        initial={selectedDevelopment}
-        onSuccess={async () => {
-          setReloadKey((k) => k + 1)
-          setOpen(false)
-        }}
-      />
     </>
   )
 }

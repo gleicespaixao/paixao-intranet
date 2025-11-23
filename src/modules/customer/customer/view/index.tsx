@@ -12,7 +12,6 @@ import { CustomerViewPurchaseHistory } from './purchase-history'
 import { CustomerViewRelationship } from './relationship'
 import { CustomerViewCompany } from './company'
 import { ControlledDeleteButton } from '@/components/dialog/controled/controlled-delete'
-import { toaster } from '@/components/ui/toaster'
 import { useRouter } from 'next/router'
 import { deleteCustomer } from '@/services/customer'
 import { CustomerViewDocs } from './docs'
@@ -31,25 +30,25 @@ export const ModuleCustomerView = ({
         title={`ID do cliente: ${customer?.token}`}
         subtitle={formatDateLong(customer?.logs.inclusion?.date)}
         backButton
-        backButtonLink="/customer"
+        backButtonLink="/customer/customer"
         rightSlot={
           <ControlledDeleteButton
             data={customer}
             entity="cliente"
             itemName={customer.name}
-            onDelete={async ({ id }) => await deleteCustomer(id)}
+            onDelete={async (data) => {
+              const res = await deleteCustomer(data?.id ?? '')
+
+              if (!res.success) {
+                throw new Error()
+              }
+            }}
             renderTrigger={(open, loading) => (
               <Button onClick={open} colorPalette="red" loading={loading}>
                 Excluir cliente
               </Button>
             )}
-            onError={() =>
-              toaster.create({
-                title: 'Ocorreu um erro ao excluir o cliente',
-                type: 'error'
-              })
-            }
-            redirectTo="/customer"
+            redirectTo="/customer/customer"
             navigate={(to) => router.push(to)}
           />
         }

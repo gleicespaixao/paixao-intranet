@@ -126,7 +126,6 @@ export const ModuleLeisure = ({ title }: { title: string }) => {
               setSelectedLeisure(undefined)
               setOpen(true)
             }}
-            male={false}
           />
         </Card.Body>
       </Card.Root>

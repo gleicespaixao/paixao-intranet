@@ -93,7 +93,7 @@ export function LeisureDialogForm({ open, onOpenChange, mode, initial, onSuccess
         <Dialog.Positioner>
           <Dialog.Content>
             <Dialog.Header>
-              <Dialog.Title>{mode === 'create' ? 'Nova' : 'Editar'} lazer</Dialog.Title>
+              <Dialog.Title>{mode === 'create' ? 'Novo' : 'Editar'} lazer</Dialog.Title>
               <Dialog.CloseTrigger />
             </Dialog.Header>
 

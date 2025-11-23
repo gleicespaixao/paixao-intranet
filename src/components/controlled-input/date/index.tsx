@@ -17,6 +17,7 @@ type DateInputProps<TFieldValues extends FieldValues> = {
   error?: string
   required?: boolean
   placeholder?: string
+  format?: string
   disabled?: boolean
   maxDate?: DateObject
   minDate?: DateObject
@@ -24,6 +25,7 @@ type DateInputProps<TFieldValues extends FieldValues> = {
   disableWeekend?: boolean
   disablePortal?: boolean
   borderColor?: string
+  onlyMonthPicker?: boolean
   closeButton?: boolean
 }
 
@@ -33,6 +35,7 @@ export function ControlledInputDate<T extends FieldValues>({
   error,
   required,
   placeholder = 'DD/MM/AAAA',
+  format = 'DD/MM/YYYY',
   disabled,
   borderColor,
   maxDate,
@@ -40,6 +43,7 @@ export function ControlledInputDate<T extends FieldValues>({
   minDate,
   disableWeekend,
   disablePortal,
+  onlyMonthPicker,
   closeButton = false
 }: DateInputProps<T>) {
   const { colorMode } = useColorMode()
@@ -58,10 +62,11 @@ export function ControlledInputDate<T extends FieldValues>({
               </Field.Label>
             )}
             <DatePicker
+              onlyMonthPicker={onlyMonthPicker}
               zIndex={9999}
               value={inputCalendarValue ? new DateObject(inputCalendarValue) : null}
               onChange={(date) => onChange(date ? (date as DateObject).toDate() : null)}
-              format="DD/MM/YYYY"
+              format={format}
               placeholder={placeholder}
               locale={ptBR}
               editable={true}
