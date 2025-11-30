@@ -18,6 +18,12 @@ export const schemaDevelopment = z.object({
 
   technicalSpecifications: z.object({
     floorPlan: z.string().optional(),
+    unitType: z.array(
+      z.object({
+        value: z.string(),
+        label: z.string()
+      })
+    ),
     leisure: z.array(
       z.object({
         value: z.string(),

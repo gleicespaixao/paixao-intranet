@@ -35,6 +35,7 @@ import { BiTrashAlt } from 'react-icons/bi'
 import { withMask } from 'use-mask-input'
 import NextLink from 'next/link'
 import { ControlledDeleteButton } from '@/components/dialog/controled/controlled-delete'
+import { fetchUnitType } from '@/services/unit-type'
 
 type Props = {
   mode: 'create' | 'edit'
@@ -58,6 +59,12 @@ const toDefaultValues = (rel?: Partial<ApiDevelopment>): DefaultValues<Developme
 
     technicalSpecifications: {
       floorPlan: rel?.technicalSpecifications?.floorPlan ?? '',
+      unitType: rel?.technicalSpecifications?.unitType
+        ? rel?.technicalSpecifications?.unitType.map((unitType) => ({
+            value: unitType.id,
+            label: unitType.name
+          }))
+        : [],
       leisure: rel?.technicalSpecifications?.leisure
         ? rel?.technicalSpecifications?.leisure.map((leisure) => ({
             value: leisure.id,
@@ -365,12 +372,50 @@ export function ModuleNewEditDevelopment({ mode, initial }: Props) {
                       error={errors.technicalSpecifications?.floorPlan?.message}
                       endElement="m²"
                     />
-                    <ControlledSelect
-                      name="status"
+                    <ControlledSelectAsync
+                      label="Tipo de unidade"
+                      name="technicalSpecifications.unitType"
                       control={control}
-                      label="Status"
-                      error={errors.status?.message}
-                      items={STATUS_OPTIONS}
+                      multiple
+                      isFilter
+                      required
+                      error={errors.technicalSpecifications?.unitType?.message}
+                      loadOptions={async (_input, searchTxt = '', selected) => {
+                        // 1) excluir os já selecionados
+                        const excludeSelected =
+                          selected?.map((s) => ({
+                            field: 'id',
+                            op: 'ne' as const,
+                            value: s.value
+                          })) ?? []
+
+                        // 2) se o usuário digitou algo, montar o lk no name
+                        const searchConds =
+                          searchTxt.trim().length > 0
+                            ? [
+                                {
+                                  field: 'name',
+                                  op: 'lk' as const,
+                                  value: searchTxt.trim()
+                                }
+                              ]
+                            : []
+
+                        const fixedConds = [...excludeSelected, ...searchConds]
+
+                        const res = await fetchUnitType({
+                          fixedConds
+                        })
+
+                        if (res.success && res.data) {
+                          return res.data.records.map((c) => ({
+                            label: c.name,
+                            value: c.id,
+                            isDisabled: !c.status
+                          }))
+                        }
+                        return []
+                      }}
                     />
                   </Grid>
                   <ControlledSelectAsync

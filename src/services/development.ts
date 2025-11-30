@@ -43,12 +43,17 @@ const toApiDevelopmentPayload = (form: DevelopmentForm): ApiDevelopmentCreateUpd
     form.technicalSpecifications.leisure?.map((lei) => ({
       id: lei.value ?? ''
     })) ?? []
+  const unitType =
+    form.technicalSpecifications.unitType?.map((unit) => ({
+      id: unit.value ?? ''
+    })) ?? []
 
   const distance = form.distance?.map((dis) => dis.distance?.trim() ?? '').filter((d) => d) ?? []
 
   // remove entradas sem id (linha vazia)
   const filteredRealEstateDeveloper = realEstateDeveloper.filter((oc) => oc.id)
   const filteredLeisure = leisure.filter((oc) => oc.id)
+  const filteredUnitType = unitType.filter((oc) => oc.id)
   return {
     status: form.status === 'active' ? true : false,
     name: form.name,
@@ -57,7 +62,8 @@ const toApiDevelopmentPayload = (form: DevelopmentForm): ApiDevelopmentCreateUpd
     releaseDate: form.releaseDate?.toISOString().slice(0, 10), // "YYYY-MM-DD"
     technicalSpecifications: {
       floorPlan: form.technicalSpecifications.floorPlan,
-      leisure: filteredLeisure
+      leisure: filteredLeisure,
+      unitType: filteredUnitType
     },
     projectTeam: {
       architecture: form.projectTeam.architecture,

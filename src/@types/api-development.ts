@@ -11,6 +11,7 @@ export type ApiDevelopment = {
 
   technicalSpecifications: {
     floorPlan: string
+    unitType: ApiItemLinks[]
     leisure?: ApiItemLinks[]
   }
 
@@ -43,6 +44,7 @@ export type ApiDevelopmentCreateUpdate = {
 
   technicalSpecifications: {
     floorPlan?: string | null
+    unitType: { id: string }[]
     leisure?: { id: string }[]
   }
 

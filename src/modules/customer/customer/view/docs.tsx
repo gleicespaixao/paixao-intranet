@@ -1,11 +1,11 @@
 import { ApiCustomer } from '@/@types/api-customer'
-import { ApiDocs } from '@/@types/api-docs'
+import { ApiFile } from '@/@types/api-file'
 import { DeleteDialog } from '@/components/dialog/controled'
 import { FileUploadDialogForm } from '@/components/dialog/file-upload-dialog'
 import { ColumnDef, ListingTable } from '@/components/listing-table'
 import { Tooltip } from '@/components/ui/tooltip'
 import { api } from '@/lib/api'
-import { deleteFile, useDocsList } from '@/services/docs'
+import { deleteFile, useDocsList } from '@/services/file'
 import { Card, DownloadTrigger, FormatByte, HStack, IconButton } from '@chakra-ui/react'
 import React from 'react'
 import { BiCloudDownload, BiTrashAlt } from 'react-icons/bi'
@@ -13,7 +13,7 @@ import { BiCloudDownload, BiTrashAlt } from 'react-icons/bi'
 type Row = {
   id: string
   name: string
-  type: string
+  format: string
   size: number
 }
 
@@ -43,7 +43,7 @@ export const CustomerViewDocs = ({ customer }: { customer: ApiCustomer }) => {
   // dialog de delete
   const [deleteOpen, setDeleteOpen] = React.useState(false)
   const [deleteLoading, setDeleteLoading] = React.useState(false)
-  const [fileToDelete, setFileToDelete] = React.useState<ApiDocs | null>(null)
+  const [fileToDelete, setFileToDelete] = React.useState<ApiFile | null>(null)
 
   const getMimeTypeFromName = (fileName: string): string => {
     const ext = fileName.split('.').pop()?.toLowerCase()
@@ -69,11 +69,11 @@ export const CustomerViewDocs = ({ customer }: { customer: ApiCustomer }) => {
 
   const rows: Row[] = React.useMemo(
     () =>
-      apiRows.map((r: ApiDocs) => {
+      apiRows.map((r: ApiFile) => {
         return {
           id: r.id,
           name: r?.name,
-          type: r?.type,
+          format: r?.format,
           size: r?.size ?? 0
         }
       }),
@@ -90,24 +90,24 @@ export const CustomerViewDocs = ({ customer }: { customer: ApiCustomer }) => {
           return <FormatByte value={row.size} />
         }
       },
-      { header: 'Tipo', accessorKey: 'type' },
+      { header: 'Tipo', accessorKey: 'format' },
       {
         id: 'actions',
         header: '',
         align: 'right',
         cell: (row) => {
           const dataDownload = async () => {
-            const res = await api.get(`Tools/file/${row.id}/download`, {
+            const res = await api.get(`File/${row.id}/download`, {
               responseType: 'blob'
             })
             return res.data
           }
-          const mimeType = getMimeTypeFromName(`${row.name}.${row.type}`)
-          console.log('`${row.name}.${row.extension}`', `${row.type}`)
+          const mimeType = getMimeTypeFromName(`${row.name}.${row.format}`)
+
           return (
             <HStack gap={2} justify="flex-end">
               <Tooltip content="Download" openDelay={300}>
-                <DownloadTrigger data={dataDownload} fileName={`${row.name}.${row.type}`} mimeType={mimeType} asChild>
+                <DownloadTrigger data={dataDownload} fileName={`${row.name}.${row.format}`} mimeType={mimeType} asChild>
                   <IconButton aria-label="Download" size="sm" variant="subtle">
                     <BiCloudDownload />
                   </IconButton>
@@ -150,7 +150,7 @@ export const CustomerViewDocs = ({ customer }: { customer: ApiCustomer }) => {
     try {
       setDeleteLoading(true)
 
-      const res = await deleteFile(customer.id!, fileToDelete.id)
+      const res = await deleteFile(fileToDelete.id)
 
       if (!res.success) return
 
@@ -204,6 +204,8 @@ export const CustomerViewDocs = ({ customer }: { customer: ApiCustomer }) => {
           setReloadKey((k) => k + 1)
           setOpen(false)
         }}
+        accept="*"
+        maxFiles={10}
       />
       <DeleteDialog
         open={deleteOpen}
