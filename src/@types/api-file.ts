@@ -1,8 +1,8 @@
-export type ApiDocs = {
+export type ApiFile = {
   id: string
   token: number
   name: string
   location: string
-  type: string
+  format: string
   size: number
 }

@@ -1,7 +1,6 @@
-import { createListCollection, FieldLabel, Portal, SelectPositioner } from '@chakra-ui/react'
+import { createListCollection, Field, Portal, SelectPositioner } from '@chakra-ui/react'
 import { Control, Controller, FieldValues, Path } from 'react-hook-form'
 
-import { Field } from '@/components/ui/field'
 import { SelectContent, SelectItem, SelectRoot, SelectTrigger, SelectValueText } from '@/components/ui/select'
 
 type SelectPrimeProps<TFieldValues extends FieldValues> = {
@@ -17,6 +16,7 @@ type SelectPrimeProps<TFieldValues extends FieldValues> = {
   defaultValues?: string[]
   selectLabel?: string
   disabled?: boolean
+  required?: boolean
   isDialog?: boolean
 }
 
@@ -32,6 +32,7 @@ export function ControlledSelect<T extends FieldValues>({
   selectLabel,
   label,
   disabled,
+  required,
   defaultValues,
   flip = true,
   multiple = false
@@ -71,8 +72,13 @@ export function ControlledSelect<T extends FieldValues>({
         const displayLabel = selectedItem?.label ?? placeholder
 
         return (
-          <Field invalid={!!error} errorText={error}>
-            {label && <FieldLabel>{label}</FieldLabel>}
+          <Field.Root required={required} invalid={!!error}>
+            {label && (
+              <Field.Label>
+                {label}
+                <Field.RequiredIndicator />
+              </Field.Label>
+            )}
 
             <SelectRoot
               collection={collection}
@@ -104,7 +110,7 @@ export function ControlledSelect<T extends FieldValues>({
                 renderSelectContent()
               )}
             </SelectRoot>
-          </Field>
+          </Field.Root>
         )
       }}
     />

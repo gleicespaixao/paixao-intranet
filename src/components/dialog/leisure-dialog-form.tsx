@@ -8,49 +8,33 @@ import { DeleteDialog } from './controled'
 import { BiTrashAlt } from 'react-icons/bi'
 import { STATUS_OPTIONS } from '@/utils/status'
 import { ControlledInput } from '../controlled-input/controlled-input'
-import { ApiDevelopment } from '@/@types/api-development'
-import { addDevelopment, deleteDevelopment, updateDevelopment } from '@/services/development'
-import { DevelopmentForm, schemaDevelopment } from '@/schemas/development'
-import { ControlledSelectAsync } from '../controlled-select/controlled-select-async'
-import { fetchNeighborhood } from '@/services/neighborhood'
-import { fetchRealEstateDeveloper } from '@/services/real-estate-developer'
+import { ApiLeisure } from '@/@types/api-leisure'
+import { schemaLeisure, LeisureForm } from '@/schemas/leisure'
+import { addLeisure, deleteLeisure, updateLeisure } from '@/services/leisure'
 
 type Props = {
   open: boolean
   onOpenChange: (open: boolean) => void
   mode: 'create' | 'edit'
-  initial?: Partial<ApiDevelopment>
-  onSuccess?: (typeOfProperty: ApiDevelopment) => void
+  initial?: Partial<ApiLeisure>
+  onSuccess?: (realEstateDeveloper: ApiLeisure) => void
 }
 
-const toDefaultValues = (rel?: Partial<ApiDevelopment>): DefaultValues<DevelopmentForm> => {
+const toDefaultValues = (rel?: Partial<ApiLeisure>): DefaultValues<LeisureForm> => {
   return {
     status: rel?.status === false ? 'inactive' : 'active',
-    name: rel?.name ?? '',
-    neighborhood: rel?.neighborhood
-      ? {
-          value: rel.neighborhood.id,
-          label: rel.neighborhood.name
-        }
-      : { value: '', label: '' },
-    realEstateDeveloper:
-      rel?.realEstateDeveloper && rel.realEstateDeveloper.length > 0
-        ? rel.realEstateDeveloper.map((real) => ({
-            value: real.id,
-            label: real.name
-          }))
-        : []
+    name: rel?.name ?? ''
   }
 }
 
-export function DevelopmentDialogForm({ open, onOpenChange, mode, initial, onSuccess }: Props) {
+export function LeisureDialogForm({ open, onOpenChange, mode, initial, onSuccess }: Props) {
   const {
     control,
     handleSubmit,
     formState: { isSubmitting, errors },
     reset
-  } = useForm<DevelopmentForm>({
-    resolver: zodResolver(schemaDevelopment),
+  } = useForm<LeisureForm>({
+    resolver: zodResolver(schemaLeisure),
     defaultValues: toDefaultValues(initial)
   })
 
@@ -62,13 +46,13 @@ export function DevelopmentDialogForm({ open, onOpenChange, mode, initial, onSuc
     reset(toDefaultValues(initial))
   }, [initial, reset, open])
 
-  const onSubmit = async (payload: DevelopmentForm) => {
+  const onSubmit = async (payload: LeisureForm) => {
     let res
 
     if (mode === 'create') {
-      res = await addDevelopment(payload)
+      res = await addLeisure(payload)
     } else if (mode === 'edit' && initial?.id) {
-      res = await updateDevelopment(initial.id, payload)
+      res = await updateLeisure(initial.id, payload)
     }
 
     if (!res) return
@@ -86,12 +70,12 @@ export function DevelopmentDialogForm({ open, onOpenChange, mode, initial, onSuc
     if (!initial?.id) return
     try {
       setDeleteLoading(true)
-      const res = await deleteDevelopment(initial.id)
+      const res = await deleteLeisure(initial.id)
 
       if (!res.success) return
 
       if (onSuccess) {
-        onSuccess(initial as ApiDevelopment)
+        onSuccess(initial as ApiLeisure)
       }
 
       // fecha ambos
@@ -109,7 +93,7 @@ export function DevelopmentDialogForm({ open, onOpenChange, mode, initial, onSuc
         <Dialog.Positioner>
           <Dialog.Content>
             <Dialog.Header>
-              <Dialog.Title>{mode === 'create' ? 'Novo' : 'Editar'} projeto</Dialog.Title>
+              <Dialog.Title>{mode === 'create' ? 'Novo' : 'Editar'} lazer</Dialog.Title>
               <Dialog.CloseTrigger />
             </Dialog.Header>
 
@@ -125,60 +109,14 @@ export function DevelopmentDialogForm({ open, onOpenChange, mode, initial, onSuc
                   />
                 </Grid>
                 <GridItem colSpan={{ base: 1, md: 2 }}>
-                  <ControlledInput
-                    required
-                    name="name"
-                    control={control}
-                    label="Nome do projeto"
-                    error={errors.name?.message}
-                  />
+                  <ControlledInput required name="name" control={control} label="Nome" error={errors.name?.message} />
                 </GridItem>
-
-                <Grid templateColumns={{ base: '1fr', md: '1fr 1fr' }} gap={4}>
-                  <ControlledSelectAsync
-                    label="Bairro"
-                    name="neighborhood"
-                    control={control}
-                    required
-                    error={errors.neighborhood?.value?.message}
-                    loadOptions={async () => {
-                      const res = await fetchNeighborhood({})
-                      if (res.success && res.data) {
-                        return res.data.records.map((c) => ({
-                          label: c.name,
-                          value: c.id,
-                          isDisabled: !c.status
-                        }))
-                      }
-                      return []
-                    }}
-                  />
-                  <ControlledSelectAsync
-                    label="Incorporadora"
-                    name="realEstateDeveloper"
-                    control={control}
-                    required
-                    multiple
-                    error={errors.realEstateDeveloper?.message}
-                    loadOptions={async () => {
-                      const res = await fetchRealEstateDeveloper({})
-                      if (res.success && res.data) {
-                        return res.data.records.map((c) => ({
-                          label: c.name,
-                          value: c.id,
-                          isDisabled: !c.status
-                        }))
-                      }
-                      return []
-                    }}
-                  />
-                </Grid>
               </Form>
             </Dialog.Body>
             <Dialog.Footer justifyContent={mode !== 'create' ? 'space-between' : 'end'}>
               {mode !== 'create' && (
                 <IconButton
-                  aria-label="Excluir bairro"
+                  aria-label="Excluir lazer"
                   colorPalette="red"
                   variant="subtle"
                   onClick={() => setDeleteOpen(true)}
@@ -187,7 +125,7 @@ export function DevelopmentDialogForm({ open, onOpenChange, mode, initial, onSuc
                 </IconButton>
               )}
               <Button type="submit" form="typo-of-property-form" loading={isSubmitting}>
-                {mode === 'create' ? 'Salvar' : 'Atualizar'} projeto
+                {mode === 'create' ? 'Salvar' : 'Atualizar'} lazer
               </Button>
             </Dialog.Footer>
 
@@ -202,7 +140,7 @@ export function DevelopmentDialogForm({ open, onOpenChange, mode, initial, onSuc
           open={deleteOpen}
           onOpenChange={setDeleteOpen}
           loading={deleteLoading}
-          entity="projeto"
+          entity="lazer"
           itemName={initial?.name}
           onConfirm={handleConfirmDelete}
         />

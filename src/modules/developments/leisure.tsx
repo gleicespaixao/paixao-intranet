@@ -6,22 +6,15 @@ import { Badge, Card, HStack, IconButton } from '@chakra-ui/react'
 import { ColumnDef, ListingTable } from '@/components/listing-table'
 import { Tooltip } from '@/components/ui/tooltip'
 import { BiPencil } from 'react-icons/bi'
+import { ApiLeisure } from '@/@types/api-leisure'
+import { useLeisureList } from '@/services/leisure'
+import { LeisureDialogForm } from '@/components/dialog/leisure-dialog-form'
 import { getStatusMeta } from '@/utils/status'
-import { ApiDevelopment } from '@/@types/api-development'
-import { useDevelopmentList } from '@/services/development'
-import { DevelopmentDialogForm } from '@/components/dialog/development-dialog-form'
 
-type Row = {
-  id: string
-  token: number
-  name: string
-  neighborhood: string
-  realEstateDeveloper: string[]
-  status: boolean
-}
+type Row = { id: string; token: number; name: string; status: boolean }
 
-export const ModuleDevelopment = ({ title }: { title: string }) => {
-  const entity = 'projeto'
+export const ModuleLeisure = ({ title }: { title: string }) => {
+  const entity = 'lazer'
 
   const [page, setPage] = React.useState(1)
   const [pageSize, setPageSize] = React.useState(25)
@@ -32,30 +25,28 @@ export const ModuleDevelopment = ({ title }: { title: string }) => {
 
   // 👇 ESTADO PARA O DIALOG
   const [open, setOpen] = React.useState(false)
-  const [selectedDevelopment, setSelectedDevelopment] = React.useState<ApiDevelopment | undefined>(undefined)
+  const [selectedLeisure, setSelectedLeisure] = React.useState<ApiLeisure | undefined>(undefined)
 
   const {
     rows: apiRows,
     totalCount,
     loading
-  } = useDevelopmentList({
+  } = useLeisureList({
     page,
     pageSize,
     search,
-    searchFields: ['name', 'neighborhood.name', 'realEstateDeveloper.name'],
+    searchFields: ['name'],
     reloadKey
   })
 
   // mapeia para o shape da tabela
   const rows: Row[] = React.useMemo(
     () =>
-      apiRows.map((r: ApiDevelopment) => ({
+      apiRows.map((r: ApiLeisure) => ({
         id: r.id,
         token: r.token,
         name: r.name ?? '',
-        status: r.status,
-        neighborhood: r.neighborhood.name,
-        realEstateDeveloper: r.realEstateDeveloper?.map((d) => d.name ?? '').filter(Boolean) ?? []
+        status: r.status
       })),
     [apiRows]
   )
@@ -64,20 +55,6 @@ export const ModuleDevelopment = ({ title }: { title: string }) => {
     () => [
       { header: 'ID', accessorKey: 'token' },
       { header: 'Nome', accessorKey: 'name' },
-      { header: 'Bairro', accessorKey: 'neighborhood' },
-      {
-        id: 'realEstateDeveloper',
-        header: 'Incorporadora',
-        cell: (row) => (
-          <HStack gap={1} wrap="wrap">
-            {row.realEstateDeveloper.map((name) => (
-              <Badge key={name} variant="subtle">
-                {name}
-              </Badge>
-            ))}
-          </HStack>
-        )
-      },
       {
         id: 'status',
         header: 'Status',
@@ -101,7 +78,7 @@ export const ModuleDevelopment = ({ title }: { title: string }) => {
                   const rel = apiRows.find((r) => r.id === row.id)
 
                   if (rel) {
-                    setSelectedDevelopment(rel)
+                    setSelectedLeisure(rel)
                     setOpen(true)
                   }
                 }}
@@ -123,7 +100,7 @@ export const ModuleDevelopment = ({ title }: { title: string }) => {
 
   return (
     <>
-      <PageHeader title={title} subtitle="Listagem de projetos registrados" backButton />
+      <PageHeader title={title} subtitle="Listagem de lazeres registrados" backButton />
 
       <Card.Root>
         <Card.Body p={0}>
@@ -146,17 +123,18 @@ export const ModuleDevelopment = ({ title }: { title: string }) => {
             defaultPageSize={pageSize}
             loading={loading}
             includeOnClick={() => {
-              setSelectedDevelopment(undefined)
+              setSelectedLeisure(undefined)
               setOpen(true)
             }}
           />
         </Card.Body>
       </Card.Root>
-      <DevelopmentDialogForm
+      {/* Drawer de cliente (modo create) */}
+      <LeisureDialogForm
         open={open}
         onOpenChange={setOpen}
-        mode={selectedDevelopment ? 'edit' : 'create'}
-        initial={selectedDevelopment}
+        mode={selectedLeisure ? 'edit' : 'create'}
+        initial={selectedLeisure}
         onSuccess={async () => {
           setReloadKey((k) => k + 1)
           setOpen(false)

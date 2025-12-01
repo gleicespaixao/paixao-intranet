@@ -19,7 +19,7 @@ type ControlledSelectAsyncProps<TFieldValues extends FieldValues, TOption extend
   disabled?: boolean
   required?: boolean
   /** Sem any: loadOptions deve devolver TOption[] */
-  loadOptions: (inputValue?: string, searchTxt?: string) => Promise<TOption[]>
+  loadOptions: (inputValue?: string, searchTxt?: string, selectedOptions?: TOption[]) => Promise<TOption[]>
   error?: string
   /** Sem any: recebe TOption */
   getOptionLabel?: (option: TOption) => string
@@ -66,6 +66,7 @@ export function ControlledSelectAsync<TFieldValues extends FieldValues, TOption 
   const [open, setOpen] = useState(false)
   const [searchTxt, setSearchTxt] = useState('')
   const [isSearch, setIsSearch] = useState(false)
+  const [selectedOptions, setSelectedOptions] = useState<TOption[]>([])
 
   useEffect(() => {
     setIsClient(true)
@@ -88,11 +89,10 @@ export function ControlledSelectAsync<TFieldValues extends FieldValues, TOption 
 
   async function fetchOptions(txt?: string) {
     try {
-      const loadedOptions = await loadOptions('', txt)
+      const loadedOptions = await loadOptions('', txt, selectedOptions)
       const filteredOptions = applyFilters(loadedOptions)
       setOptions(filteredOptions)
     } catch (error) {
-      // tipado como unknown; se quiser, refine para Error
       console.error('Erro ao carregar opções:', error)
     } finally {
       setLoading(false)
@@ -152,10 +152,24 @@ export function ControlledSelectAsync<TFieldValues extends FieldValues, TOption 
             const firstEnabledOption = options.find((o) => !o.isDisabled)
             if (firstEnabledOption) {
               field.onChange(firstEnabledOption)
+              setSelectedOptions([firstEnabledOption])
             }
           }
           // eslint-disable-next-line react-hooks/exhaustive-deps
         }, [selectFirstIfEmpty, field.value, options])
+
+        // eslint-disable-next-line react-hooks/rules-of-hooks
+        useEffect(() => {
+          if (multiple) {
+            const arr = (field.value as TOption[]) ?? []
+            setSelectedOptions(arr)
+          } else if (field.value) {
+            setSelectedOptions([field.value as TOption])
+          } else {
+            setSelectedOptions([])
+          }
+          // eslint-disable-next-line react-hooks/exhaustive-deps
+        }, [field.value, multiple])
 
         return (
           <Field.Root required={required} invalid={!!error} width={width}>
@@ -183,17 +197,24 @@ export function ControlledSelectAsync<TFieldValues extends FieldValues, TOption 
                 placeholder={placeholder || 'Selecione uma opção'}
                 value={field.value as unknown as TOption | TOption[] | null}
                 onChange={(selected) => {
-                  // selected é TOption | TOption[] | null dependendo do isMulti
                   if (!selected) {
                     field.onChange(multiple ? [] : null)
+                    setSelectedOptions([])
                     return
                   }
+
                   const selectedOption = selected as TOption | TOption[]
-                  // se for único e vier uma opção desabilitada, ignore
+
                   if (!multiple && !Array.isArray(selectedOption)) {
                     if ((selectedOption as TOption).isDisabled) return
+                    field.onChange(selectedOption)
+                    setSelectedOptions([selectedOption])
+                    return
                   }
+
+                  const arr = Array.isArray(selectedOption) ? selectedOption : [selectedOption]
                   field.onChange(selectedOption)
+                  setSelectedOptions(arr)
                 }}
                 noOptionsMessage={() => 'Nenhuma opção disponível'}
                 getOptionLabel={getOptionLabel ?? defaultGetOptionLabel}

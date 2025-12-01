@@ -19,22 +19,91 @@ export type DevelopmentListParams = {
   signal?: AbortSignal
   reloadKey?: number
 }
+const hasAnyAddressField = (address: DevelopmentForm['address']) => {
+  if (!address) return false
+
+  return (
+    !!address.postalCode?.trim() ||
+    !!address.street?.trim() ||
+    !!address.addressLine?.trim() ||
+    !!address.streetNumber?.trim() ||
+    !!address.neighborhood?.trim() ||
+    !!address.city?.trim() ||
+    !!address.state?.trim()
+  )
+}
 
 const toApiDevelopmentPayload = (form: DevelopmentForm): ApiDevelopmentCreateUpdate => {
+  const hasAddress = hasAnyAddressField(form.address)
   const realEstateDeveloper =
     form.realEstateDeveloper?.map((dev) => ({
       id: dev.value ?? ''
     })) ?? []
+  const leisure =
+    form.technicalSpecifications.leisure?.map((lei) => ({
+      id: lei.value ?? ''
+    })) ?? []
+  const unitType =
+    form.technicalSpecifications.unitType?.map((unit) => ({
+      id: unit.value ?? ''
+    })) ?? []
+
+  const distance = form.distance?.map((dis) => dis.distance?.trim() ?? '').filter((d) => d) ?? []
 
   // remove entradas sem id (linha vazia)
   const filteredRealEstateDeveloper = realEstateDeveloper.filter((oc) => oc.id)
+  const filteredLeisure = leisure.filter((oc) => oc.id)
+  const filteredUnitType = unitType.filter((oc) => oc.id)
   return {
     status: form.status === 'active' ? true : false,
     name: form.name,
-    neighborhood: {
-      id: form.neighborhood.value
+    realEstateDeveloper: filteredRealEstateDeveloper,
+    phase: form.phase,
+    releaseDate: form.releaseDate?.toISOString().slice(0, 10), // "YYYY-MM-DD"
+    technicalSpecifications: {
+      floorPlan: form.technicalSpecifications.floorPlan,
+      leisure: filteredLeisure,
+      unitType: filteredUnitType
     },
-    realEstateDeveloper: filteredRealEstateDeveloper
+    projectTeam: {
+      architecture: form.projectTeam.architecture,
+      interiorDesign: form.projectTeam.interiorDesign,
+      landscaping: form.projectTeam.landscaping
+    },
+    distance: distance,
+    typology: {
+      studio: {
+        quantity: form.typology.studio.quantity,
+        floorPlan: form.typology.studio.floorPlan
+      },
+      one_bedroom: {
+        quantity: form.typology.one_bedroom.quantity,
+        floorPlan: form.typology.one_bedroom.floorPlan
+      },
+      two_bedroom: {
+        quantity: form.typology.two_bedroom.quantity,
+        floorPlan: form.typology.two_bedroom.floorPlan
+      },
+      three_bedroom: {
+        quantity: form.typology.three_bedroom.quantity,
+        floorPlan: form.typology.three_bedroom.floorPlan
+      },
+      four_bedroom: {
+        quantity: form.typology.four_bedroom.quantity,
+        floorPlan: form.typology.four_bedroom.floorPlan
+      }
+    },
+    address: hasAddress
+      ? {
+          postalCode: form.address.postalCode?.replace(/\D/g, '') ?? '0',
+          street: form.address.street,
+          addressLine2: form.address.addressLine,
+          streetNumber: form.address.streetNumber,
+          neighborhood: form.address.neighborhood,
+          city: form.address.city,
+          state: form.address.state
+        }
+      : null
   }
 }
 

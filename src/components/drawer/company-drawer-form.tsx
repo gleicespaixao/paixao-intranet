@@ -187,7 +187,7 @@ export function CompanyDrawerForm({ open, onOpenChange, mode, initial, onSuccess
                         label="CEP"
                         error={errors.address?.postalCode?.message}
                         ref={withMask(['99999-999'])}
-                        placeholder="Ex.: 05410001"
+                        placeholder="Ex.: 05410-001"
                       />
                       {cepLoading && <Spinner mt={9} size="sm" />}
                       <GridItem as={HStack} colSpan={{ base: 1, md: 2 }}>
