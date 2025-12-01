@@ -9,7 +9,6 @@ import { addJson, deleteJson } from './_request'
 import { AxiosRequestConfig } from 'axios'
 
 export type FileListParams = {
-  userId: string
   page: number
   pageSize: number
   search?: string
@@ -50,7 +49,7 @@ export async function deleteFile(id: string) {
   return deleteJson<ApiFile>(`/File/${id}`)
 }
 
-export async function fetchDocs({
+export async function fetchFiles({
   page,
   pageSize,
   search,
@@ -66,8 +65,8 @@ export async function fetchDocs({
   return getList<ApiFile>(`/File`, { page, pageSize, filter }, { signal })
 }
 
-export function useDocsList(params: Omit<FileListParams, 'signal'>) {
-  const { userId, page, pageSize, search = '', searchFields, fixedFilters, fixedConds, reloadKey } = params
+export function useFilesList(params: Omit<FileListParams, 'signal'>) {
+  const { page, pageSize, search = '', searchFields, fixedFilters, fixedConds, reloadKey } = params
   const debounced = useDebouncedValue(search, 300)
 
   const [rows, setRows] = React.useState<ApiFile[]>([])
@@ -78,8 +77,7 @@ export function useDocsList(params: Omit<FileListParams, 'signal'>) {
     const ac = new AbortController()
     setLoading(true)
     ;(async () => {
-      const res = await fetchDocs({
-        userId,
+      const res = await fetchFiles({
         page,
         pageSize,
         search: debounced,

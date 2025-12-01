@@ -1,11 +1,11 @@
-import { ApiCustomer } from '@/@types/api-customer'
+import { ApiDevelopment } from '@/@types/api-development'
 import { ApiFile } from '@/@types/api-file'
 import { FileUploadDialogForm } from '@/components/dialog/file-upload-dialog'
 import { ColumnDef, ListingTable } from '@/components/listing-table'
-import { MenuFilesOptions } from '@/components/menu-files-options'
 import { useFilesList } from '@/services/file'
 import { Card, FormatByte, HStack } from '@chakra-ui/react'
 import React from 'react'
+import { MenuFilesOptions } from '../../../../components/menu-files-options'
 
 type Row = {
   id: string
@@ -14,7 +14,13 @@ type Row = {
   size: number
 }
 
-export const CustomerViewDocs = ({ customer }: { customer: ApiCustomer }) => {
+export const DevelopmentViewFloorPlan = ({
+  development,
+  disabled
+}: {
+  development?: Partial<ApiDevelopment>
+  disabled: boolean
+}) => {
   const [page, setPage] = React.useState(1)
   const [pageSize, setPageSize] = React.useState(10)
   const [search, setSearch] = React.useState('')
@@ -31,7 +37,7 @@ export const CustomerViewDocs = ({ customer }: { customer: ApiCustomer }) => {
     search,
     searchFields: ['name'],
     reloadKey,
-    fixedFilters: [`customer.id eq ${customer.id}`]
+    fixedFilters: [`development.id eq ${development?.id ?? 0}`, 'tag eq floor-plant']
   })
 
   // 👇 ESTADO PARA O DIALOG
@@ -60,7 +66,7 @@ export const CustomerViewDocs = ({ customer }: { customer: ApiCustomer }) => {
           return <FormatByte value={row.size} />
         }
       },
-      { header: 'Tipo', accessorKey: 'format' },
+      { header: 'Formato', accessorKey: 'format' },
       {
         id: 'actions',
         header: '',
@@ -69,7 +75,7 @@ export const CustomerViewDocs = ({ customer }: { customer: ApiCustomer }) => {
           const rel = apiRows.find((r) => r.id === row.id)
           return (
             <HStack gap={2} justify="flex-end">
-              <MenuFilesOptions item={rel} entity="documento" setReloadKey={setReloadKey} />
+              <MenuFilesOptions item={rel} entity="planta baixa" setReloadKey={setReloadKey} />
             </HStack>
           )
         }
@@ -88,7 +94,7 @@ export const CustomerViewDocs = ({ customer }: { customer: ApiCustomer }) => {
         <Card.Body p={0}>
           <ListingTable
             simple={true}
-            entity="documentos"
+            entity="plantas baixas"
             rows={rows}
             columns={columns}
             getRowId={(r) => r.id}
@@ -108,6 +114,7 @@ export const CustomerViewDocs = ({ customer }: { customer: ApiCustomer }) => {
             includeOnClick={() => {
               setOpen(true)
             }}
+            disabled={disabled}
           />
         </Card.Body>
       </Card.Root>
@@ -116,13 +123,15 @@ export const CustomerViewDocs = ({ customer }: { customer: ApiCustomer }) => {
         onOpenChange={(isOpen) => {
           setOpen(isOpen)
         }}
-        customer={customer}
+        development={development}
         onSuccess={async () => {
           setReloadKey((k) => k + 1)
           setOpen(false)
         }}
-        accept="*"
         maxFiles={10}
+        maxFileSize={1}
+        helperText="Formatos suportados: SVG, JPG, PNG (1MB cada)"
+        tag="floor-plant"
       />
     </>
   )

@@ -34,6 +34,7 @@ export type ListingTableHeaderProps = {
   includeLabel?: string
   includeOnClick?: () => void
   male?: boolean
+  disabled?: boolean
 }
 
 export const ListingTableHeader = ({
@@ -49,7 +50,8 @@ export const ListingTableHeader = ({
   includeHref,
   includeLabel,
   includeOnClick,
-  male
+  male,
+  disabled
 }: ListingTableHeaderProps) => {
   const sizeCollection = React.useMemo(
     () => createListCollection({ items: pageSizeOptions.map((n) => ({ label: String(n), value: String(n) })) }),
@@ -77,6 +79,7 @@ export const ListingTableHeader = ({
               includeLabel={includeLabel}
               includeOnClick={includeOnClick}
               male={male}
+              disabled={disabled}
             />
           </HStack>
         )}
@@ -178,6 +181,7 @@ export const ListingTableHeader = ({
                   includeLabel={includeLabel}
                   includeOnClick={includeOnClick}
                   male={male}
+                  disabled={disabled}
                 />
               </HStack>
             </HStack>
@@ -219,7 +223,8 @@ const ListingTableHeaderAddButton = ({
   includeHref,
   includeLabel,
   includeOnClick,
-  male = true
+  male = true,
+  disabled
 }: {
   simple?: boolean
   entity: string
@@ -227,6 +232,7 @@ const ListingTableHeaderAddButton = ({
   includeLabel?: string
   includeOnClick?: () => void
   male?: boolean
+  disabled?: boolean
 }) => {
   if (!includeHref && !includeOnClick) return null
 
@@ -234,12 +240,12 @@ const ListingTableHeaderAddButton = ({
 
   if (includeOnClick) {
     return !simple ? (
-      <Button onClick={includeOnClick}>
+      <Button onClick={includeOnClick} disabled={disabled}>
         <BiPlus />
         {label}
       </Button>
     ) : (
-      <IconButton aria-label={label} onClick={includeOnClick}>
+      <IconButton aria-label={label} onClick={includeOnClick} disabled={disabled}>
         <BiPlus />
       </IconButton>
     )

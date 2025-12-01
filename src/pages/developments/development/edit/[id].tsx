@@ -6,7 +6,7 @@ import * as React from 'react'
 import type { ApiDevelopment } from '@/@types/api-development'
 import { getDevelopmentById } from '@/services/development'
 import { LoadingOverlay } from '@/components/loading-overlay'
-import { ModuleNewEditDevelopment } from '@/modules/developments/development/new'
+import { ModuleDevelopmentView } from '@/modules/developments/development/view'
 
 export const getServerSideProps = withAuthGSSP()
 const title = 'Projetos'
@@ -47,7 +47,7 @@ const ProfilePage: NextPageWithLayout = () => {
     return null
   }
 
-  return <ModuleNewEditDevelopment initial={development} mode="edit" />
+  return <ModuleDevelopmentView initial={development} mode="edit" />
 }
 
 ProfilePage.getLayout = (page) => <AppLayout title={title}>{page}</AppLayout>
