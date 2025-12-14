@@ -363,6 +363,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@badrap/bar-of-progress@npm:^0.3.0":
+  version: 0.3.0
+  resolution: "@badrap/bar-of-progress@npm:0.3.0"
+  checksum: 10c0/055325ec6802087fc992ffeb3c117b619c0f01723be415b794c7d9844d60df6257a6fbc6b1677695e6ecbd84e83c7fa43b6fa4cf89107dd915ecd5c94e5fdf41
+  languageName: node
+  linkType: hard
+
 "@chakra-ui/cli@npm:^3.28.0":
   version: 3.30.0
   resolution: "@chakra-ui/cli@npm:3.30.0"
@@ -6609,6 +6616,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "sispa@workspace:."
   dependencies:
+    "@badrap/bar-of-progress": "npm:^0.3.0"
     "@chakra-ui/cli": "npm:^3.28.0"
     "@chakra-ui/react": "npm:^3.28.0"
     "@emotion/react": "npm:^11.14.0"
